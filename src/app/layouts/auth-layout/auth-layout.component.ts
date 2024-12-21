@@ -5,9 +5,9 @@ import { RouterOutlet } from '@angular/router';
     selector: 'app-root',
     standalone: true,
     imports: [RouterOutlet],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+    templateUrl: './auth-layout.component.html',
+    styleUrl: './auth-layout.component.scss'
 })
-export class AppComponent {
-    title = 'WinterWay-web';
+export class AuthLayoutComponent {
+    //
 }
