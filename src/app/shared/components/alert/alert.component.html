@@ -1,0 +1,18 @@
+<div class="mt-5">
+    <div
+        class="ww-alert"
+        [ngClass]="{
+            'success': alertType === AlertType.Success,
+            'info': alertType === AlertType.Info,
+            'danger': alertType === AlertType.Danger,
+            'warning': alertType === AlertType.Warning,
+        }"
+    >
+        <div *ngIf="title || subtitle">
+            <strong *ngIf="title">{{ title }}</strong>&nbsp;<span *ngIf="subtitle">{{ subtitle }}</span>
+        </div>
+        <div *ngIf="text">
+            {{ text }}
+        </div>
+    </div>
+</div>

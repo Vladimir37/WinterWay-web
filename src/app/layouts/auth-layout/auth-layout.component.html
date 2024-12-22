@@ -1,4 +1,23 @@
-<div>
-    <h1>Auth layout</h1>
-    <router-outlet></router-outlet>
+<div class="auth-page">
+    <div class="auth-page-content">
+        <div class="auth-page-content-logo-container">
+            <ww-alert
+                [alertType]="AlertType.Danger"
+                title="Server error."
+                subtitle="Unable to establish a connection with the server"
+            />
+            <img
+                class="auth-page-content-logo"
+                ngSrc="/images/logo.svg"
+                alt="WinterWay logo"
+                width="256"
+                height="256"
+                priority
+            >
+        </div>
+        <div class="auth-page-form">
+            <h1>Winter Way</h1>
+            <router-outlet></router-outlet>
+        </div>
+    </div>
 </div>

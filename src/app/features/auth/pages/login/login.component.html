@@ -1,3 +1,23 @@
-<div>
-    <h2>Login page</h2>
+<div class="login-form">
+    <ww-input
+        id="login-input"
+        placeholder="Placehold"
+        label="Label"
+        [labelType]="InputLabelType.Default"
+        [size]="InputSize.Medium"
+        [validState]="InputValidState.None"
+        [(model)]="login"
+    />
+    <ww-button
+        label="ButtonText"
+        [size]="ButtonSize.Medium"
+        [type]="ButtonType.Primary"
+        [outline]="true"
+        (clicked)="Login()"
+    />
+    <ww-textarea
+        label="Object"
+        [size]="7"
+        [(model)]="login"
+    />
 </div>

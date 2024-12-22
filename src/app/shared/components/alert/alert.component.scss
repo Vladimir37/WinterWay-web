@@ -1,0 +1,17 @@
+.ww-alert {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    color: var(--lightBlackTextColor);
+    &.success {
+        background-color: var(--successColor);
+    }
+    &.info {
+        background-color: var(--infoColor);
+    }
+    &.warning {
+        background-color: var(--warningColor);
+    }
+    &.danger {
+        background-color: var(--dangerColor);
+    }
+}

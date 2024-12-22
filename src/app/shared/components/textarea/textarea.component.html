@@ -1,0 +1,16 @@
+<div>
+    <label
+        *ngIf="label"
+        [for]="id"
+        class="form-label mt-4"
+    >
+        {{ label }}
+    </label>
+    <textarea
+        class="form-control"
+        [id]="id"
+        [rows]="size"
+        [value]="model"
+        (input)="onInputChange($event)"
+    ></textarea>
+</div>
