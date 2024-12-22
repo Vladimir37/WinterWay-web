@@ -16,8 +16,9 @@ export class WWInputComponent {
     @Input() model!: string;
     @Input() id: string = 'default-input-id';
     @Input() placeholder: string = '';
+    @Input() type: string = 'text';
     @Input() label: string = '';
-    @Input() labelType: InputLabelType = InputLabelType.None;
+    @Input() labelType: InputLabelType = InputLabelType.Default;
     @Input() size: InputSize = InputSize.Medium;
     @Input() validState: InputValidState = InputValidState.None;
     @Input() validatorMessage: string = '';

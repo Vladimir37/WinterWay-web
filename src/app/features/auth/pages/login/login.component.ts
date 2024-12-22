@@ -1,27 +1,26 @@
 import { Component } from '@angular/core';
 import { WWInputComponent } from '../../../../shared/components/input/input.component';
-import { InputLabelType, InputSize, InputValidState } from '../../../../shared/components/input/input.enums';
 import { WWButtonComponent } from '../../../../shared/components/button/button.component';
 import { ButtonSize, ButtonType } from '../../../../shared/components/button/button.enums';
-import { WWTextareaComponent } from '../../../../shared/components/textarea/textarea.component';
+import { AlertType } from '../../../../shared/components/alert/alert.enums';
+import { WWAlertComponent } from '../../../../shared/components/alert/alert.component';
 
 @Component({
     standalone: true,
-    imports: [WWInputComponent, WWButtonComponent, WWTextareaComponent],
+    imports: [WWInputComponent, WWButtonComponent, WWAlertComponent],
     templateUrl: './login.component.html',
     styleUrl: './login.component.scss'
 })
 export class LoginPageComponent {
     login: string = '';
+    password: string = '';
 
-    protected readonly InputLabelType = InputLabelType;
-    protected readonly InputSize = InputSize;
-    protected readonly InputValidState = InputValidState;
+    protected readonly ButtonSize = ButtonSize;
+    protected readonly ButtonType = ButtonType;
 
     Login() {
         console.log('Login');
     }
 
-    protected readonly ButtonSize = ButtonSize;
-    protected readonly ButtonType = ButtonType;
+    protected readonly AlertType = AlertType;
 }

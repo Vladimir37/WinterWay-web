@@ -1,23 +1,42 @@
 <div class="login-form">
     <ww-input
         id="login-input"
-        placeholder="Placehold"
-        label="Label"
-        [labelType]="InputLabelType.Default"
-        [size]="InputSize.Medium"
-        [validState]="InputValidState.None"
+        label="Username"
         [(model)]="login"
     />
-    <ww-button
-        label="ButtonText"
-        [size]="ButtonSize.Medium"
-        [type]="ButtonType.Primary"
-        [outline]="true"
-        (clicked)="Login()"
+    <ww-input
+        id="pass-input"
+        type="password"
+        label="Password"
+        [(model)]="password"
     />
-    <ww-textarea
-        label="Object"
-        [size]="7"
-        [(model)]="login"
+    <ww-alert
+        class="login-form-error"
+        [alertType]="AlertType.Danger"
+        subtitle="Invalid username or password"
     />
+    <div class="login-form-button-main">
+        <ww-button
+            label="Login"
+            [size]="ButtonSize.Large"
+            [type]="ButtonType.Primary"
+            (clicked)="Login()"
+        />
+    </div>
+    <div class="login-form-button-additional">
+        <ww-button
+            label="Register"
+            [size]="ButtonSize.Small"
+            [type]="ButtonType.Primary"
+            [outline]="false"
+            (clicked)="Login()"
+        />
+        <ww-button
+            label="Import data"
+            [size]="ButtonSize.Small"
+            [type]="ButtonType.Primary"
+            [outline]="false"
+            (clicked)="Login()"
+        />
+    </div>
 </div>

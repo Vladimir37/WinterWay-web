@@ -1,50 +1,49 @@
-<div>
-    <div
+<div
+    class="ww-input"
+    [ngClass]="{
+        'form-floating': labelType === InputLabelType.Floating
+    }"
+>
+    <label
+        *ngIf="labelType === InputLabelType.Default"
+        class="col-form-label"
         [ngClass]="{
-            'form-floating': labelType === InputLabelType.Floating
+            'col-form-label-lg': size === InputSize.Large,
+            'col-form-label-sm': size === InputSize.Small
+        }"
+        [for]="id"
+    >
+        {{ label }}
+    </label>
+    <input
+        [type]="type"
+        class="form-control"
+        [ngClass]="{
+            'form-control-lg': size === InputSize.Large,
+            'form-control-sm': size === InputSize.Small,
+            'is-valid': validState === InputValidState.Valid,
+            'is-invalid': validState === InputValidState.Invalid
+        }"
+        [id]="id"
+        [placeholder]="placeholder"
+        autocomplete="off"
+        [disabled]="disabled"
+        [value]="model"
+        (input)="onInputChange($event)"
+    >
+    <label
+        *ngIf="labelType === InputLabelType.Floating"
+        [for]="id"
+    >
+        {{ label }}
+    </label>
+    <div
+        *ngIf="validState !== InputValidState.None"
+        [ngClass]="{
+            'valid-feedback': validState === InputValidState.Valid,
+            'invalid-feedback': validState === InputValidState.Invalid
         }"
     >
-        <label
-            *ngIf="labelType === InputLabelType.Default"
-            class="col-form-label"
-            [ngClass]="{
-                'col-form-label-lg': size === InputSize.Large,
-                'col-form-label-sm': size === InputSize.Small
-            }"
-            [for]="id"
-        >
-            {{ label }}
-        </label>
-        <input
-            type="text"
-            class="form-control"
-            [ngClass]="{
-                'form-control-lg': size === InputSize.Large,
-                'form-control-sm': size === InputSize.Small,
-                'is-valid': validState === InputValidState.Valid,
-                'is-invalid': validState === InputValidState.Invalid
-            }"
-            [id]="id"
-            [placeholder]="placeholder"
-            autocomplete="off"
-            [disabled]="disabled"
-            [value]="model"
-            (input)="onInputChange($event)"
-        >
-        <label
-            *ngIf="labelType === InputLabelType.Floating"
-            [for]="id"
-        >
-            {{ label }}
-        </label>
-        <div
-            *ngIf="validState !== InputValidState.None"
-            [ngClass]="{
-                'valid-feedback': validState === InputValidState.Valid,
-                'invalid-feedback': validState === InputValidState.Invalid
-            }"
-        >
-            {{ validatorMessage }}
-        </div>
+        {{ validatorMessage }}
     </div>
 </div>

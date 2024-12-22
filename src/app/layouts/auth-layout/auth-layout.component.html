@@ -5,6 +5,7 @@
                 [alertType]="AlertType.Danger"
                 title="Server error."
                 subtitle="Unable to establish a connection with the server"
+                [@authErrorAnimation]="errorState"
             />
             <img
                 class="auth-page-content-logo"
@@ -13,9 +14,13 @@
                 width="256"
                 height="256"
                 priority
+                [@authLogoAnimation]="loadingState"
             >
         </div>
-        <div class="auth-page-form">
+        <div
+            class="auth-page-form"
+            [@authFormAnimation]="loadingState"
+        >
             <h1>Winter Way</h1>
             <router-outlet></router-outlet>
         </div>
