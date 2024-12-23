@@ -4,6 +4,9 @@
     justify-content: center;
     align-items: flex-start;
     background-color: var(--primaryColor);
+    h1 {
+        text-align: center;
+    }
 }
 .auth-page-content {
     min-width: 700px;
@@ -23,6 +26,18 @@
 .auth-page-form {
     width: 600px;
     padding: 20px 50px;
-    text-align: center;
+    text-align: left;
     background-color: rgba(255, 255, 255, 0.6);
+}
+.auth-page-form-input {
+    margin-bottom: 15px;
+}
+.auth-page-button-main {
+    text-align: center;
+}
+.auth-page-button-additional {
+    text-align: right;
+}
+.auth-page-button-back {
+    text-align: left;
 }
