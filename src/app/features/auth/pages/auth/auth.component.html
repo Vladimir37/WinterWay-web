@@ -5,11 +5,11 @@
                 [alertType]="AlertType.Danger"
                 title="Server error."
                 subtitle="Unable to establish a connection with the server"
-                [@authErrorAnimation]="errorState"
+                [@authErrorAnimation]="connectionErrorState"
             />
             <img
                 class="auth-page-content-logo"
-                ngSrc="/images/logo.svg"
+                ngSrc="/images/logos/logo.svg"
                 alt="WinterWay logo"
                 width="256"
                 height="256"
@@ -24,37 +24,50 @@
         </div>
     </div>
 
-    <ng-template #loginForm>
+    <ng-template #loginFormBlock>
         <div
             class="auth-page-form"
         >
             <h1>Winter Way</h1>
-            <div class="auth-page-form-input">
-                <ww-input
-                    id="login-input"
-                    label="Username"
-                    [(model)]="login"
+            <form [formGroup]="loginForm">
+                <div class="auth-page-form-input">
+                    <ww-input
+                        id="login-input"
+                        label="Username"
+                        formControlName="Username"
+                        [(model)]="login"
+                    />
+                </div>
+                <div class="auth-page-form-input">
+                    <ww-input
+                        id="pass-input"
+                        type="password"
+                        label="Password"
+                        formControlName="Password"
+                        [(model)]="password"
+                    />
+                </div>
+            </form>
+            <div class="auth-page-form-info">
+                <div class="auth-page-form-info-preloader">
+                    <ww-preloader
+                        [@authPreloaderAnimation]="preloaderState"
+                    />
+                </div>
+                <ww-alert
+                    class="login-form-error"
+                    [alertType]="AlertType.Danger"
+                    [subtitle]="errorMessage"
+                    [@authErrorAnimation]="requestErrorState"
                 />
             </div>
-            <div class="auth-page-form-input">
-                <ww-input
-                    id="pass-input"
-                    type="password"
-                    label="Password"
-                    [(model)]="password"
-                />
-            </div>
-            <ww-alert
-                class="login-form-error"
-                [alertType]="AlertType.Danger"
-                subtitle="Invalid username or password"
-            />
             <div class="auth-page-button-main">
                 <ww-button
                     label="Login"
                     [size]="ButtonSize.Large"
                     [type]="ButtonType.Primary"
-                    (clicked)="Login()"
+                    [disabled]="isLoading"
+                    (clicked)="LoginClick()"
                 />
             </div>
             <div class="auth-page-button-additional">
@@ -62,18 +75,20 @@
                     label="Register"
                     [size]="ButtonSize.Small"
                     [type]="ButtonType.Primary"
-                    (clicked)="loadBlock(registerForm)"
+                    [disabled]="isLoading"
+                    (clicked)="loadBlock(registerFormBlock)"
                 />
                 <ww-button
                     label="Import data"
                     [size]="ButtonSize.Small"
                     [type]="ButtonType.Primary"
-                    (clicked)="loadBlock(importForm)"
+                    [disabled]="isLoading"
+                    (clicked)="loadBlock(importFormBlock)"
                 />
             </div>
         </div>
     </ng-template>
-    <ng-template #registerForm>
+    <ng-template #registerFormBlock>
         <div
             class="auth-page-form"
         >
@@ -97,21 +112,30 @@
                 <ww-input
                     id="pass-again-reg"
                     type="password"
-                    label="Repeat зassword"
+                    label="Repeat password"
                     [(model)]="password"
                 />
             </div>
-            <ww-alert
-                class="login-form-error"
-                [alertType]="AlertType.Danger"
-                subtitle="Invalid username or password"
-            />
+            <div class="auth-page-form-info">
+                <div class="auth-page-form-info-preloader">
+                    <ww-preloader
+                        [@authPreloaderAnimation]="preloaderState"
+                    />
+                </div>
+                <ww-alert
+                    class="login-form-error"
+                    [alertType]="AlertType.Danger"
+                    [subtitle]="errorMessage"
+                    [@authErrorAnimation]="requestErrorState"
+                />
+            </div>
             <div class="auth-page-button-main">
                 <ww-button
                     label="Create account"
                     [size]="ButtonSize.Large"
                     [type]="ButtonType.Primary"
-                    (clicked)="Login()"
+                    [disabled]="isLoading"
+                    (clicked)="RegistrationClick()"
                 />
             </div>
             <div class="auth-page-button-back">
@@ -119,12 +143,13 @@
                     label="Go back"
                     [size]="ButtonSize.Small"
                     [type]="ButtonType.Primary"
-                    (clicked)="loadBlock(loginForm)"
+                    [disabled]="isLoading"
+                    (clicked)="loadBlock(loginFormBlock)"
                 />
             </div>
         </div>
     </ng-template>
-    <ng-template #importForm>
+    <ng-template #importFormBlock>
         <div
             class="auth-page-form"
         >
@@ -137,25 +162,35 @@
                     [(model)]="password"
                 />
             </div>
+            <div class="auth-page-form-info">
+                <div class="auth-page-form-info-preloader">
+                    <ww-preloader
+                        [@authPreloaderAnimation]="preloaderState"
+                    />
+                </div>
+                <ww-alert
+                    class="login-form-error"
+                    [alertType]="AlertType.Danger"
+                    [subtitle]="errorMessage"
+                    [@authErrorAnimation]="requestErrorState"
+                />
+            </div>
             <div class="auth-page-button-main">
                 <ww-button
                     label="Import"
                     [size]="ButtonSize.Large"
                     [type]="ButtonType.Primary"
-                    (clicked)="Login()"
+                    [disabled]="isLoading"
+                    (clicked)="ImportClick()"
                 />
             </div>
-            <ww-alert
-                class="login-form-error"
-                [alertType]="AlertType.Danger"
-                subtitle="Invalid data format"
-            />
             <div class="auth-page-button-back">
                 <ww-button
                     label="Go back"
                     [size]="ButtonSize.Small"
                     [type]="ButtonType.Primary"
-                    (clicked)="loadBlock(loginForm)"
+                    [disabled]="isLoading"
+                    (clicked)="loadBlock(loginFormBlock)"
                 />
             </div>
         </div>

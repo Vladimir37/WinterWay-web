@@ -7,7 +7,7 @@ import { InputLabelType, InputSize, InputValidState } from './input.enums';
     selector: 'ww-input',
     imports: [
         NgIf,
-        NgClass
+        NgClass,
     ],
     templateUrl: './input.component.html',
     styleUrl: './input.component.scss'

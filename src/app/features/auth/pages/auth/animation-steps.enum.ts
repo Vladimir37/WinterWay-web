@@ -3,7 +3,7 @@ export enum AnimationTwoStep {
     Finish = 'finish',
 }
 
-export enum AnimationFormStep {
+export enum AnimationVisibilityStep {
     Hidden = 'hidden',
     Visible = 'visible',
 }

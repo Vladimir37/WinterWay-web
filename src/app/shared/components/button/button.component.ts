@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { ButtonSize, ButtonType } from './button.enums';
 
@@ -8,7 +8,6 @@ import { ButtonSize, ButtonType } from './button.enums';
     selector: 'ww-button',
     imports: [
         ButtonsModule,
-        // NgIf,
         NgClass
     ],
     templateUrl: './button.component.html',

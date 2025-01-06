@@ -1,13 +1,15 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { WWAlertComponent } from '../../../../shared/components/alert/alert.component';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertType } from '../../../../shared/components/alert/alert.enums';
-import { AnimationFormStep, AnimationTwoStep } from './animation-steps.enum';
+import { AnimationTwoStep, AnimationVisibilityStep } from './animation-steps.enum';
 import { ButtonSize, ButtonType } from '../../../../shared/components/button/button.enums';
+import { WWAlertComponent } from '../../../../shared/components/alert/alert.component';
 import { WWButtonComponent } from '../../../../shared/components/button/button.component';
 import { WWInputComponent } from '../../../../shared/components/input/input.component';
 import { WWTextareaComponent } from '../../../../shared/components/textarea/textarea.component';
+import { WWPreloaderComponent } from '../../../../shared/components/preloader/preloader.component';
 
 @Component({
     selector: 'app-root',
@@ -15,10 +17,12 @@ import { WWTextareaComponent } from '../../../../shared/components/textarea/text
     imports: [
         NgOptimizedImage,
         NgTemplateOutlet,
+        ReactiveFormsModule,
         WWButtonComponent,
         WWInputComponent,
         WWAlertComponent,
         WWTextareaComponent,
+        WWPreloaderComponent,
     ],
     templateUrl: './auth.component.html',
     styleUrl: './auth.component.scss',
@@ -37,28 +41,41 @@ import { WWTextareaComponent } from '../../../../shared/components/textarea/text
             ])
         ]),
         trigger('authErrorAnimation', [
-            state(AnimationTwoStep.Start, style({
+            state(AnimationVisibilityStep.Hidden, style({
                 'pointer-events': 'none',
                 opacity: '0'
             })),
-            state(AnimationTwoStep.Finish, style({
+            state(AnimationVisibilityStep.Visible, style({
                 'pointer-events': 'auto',
                 opacity: '1'
             })),
-            transition(`${AnimationTwoStep.Start} <=> ${AnimationTwoStep.Finish}`, [
-                animate('500ms ease-in-out')
+            transition(`${AnimationVisibilityStep.Hidden} <=> ${AnimationVisibilityStep.Visible}`, [
+                animate('400ms ease-in-out')
+            ])
+        ]),
+        trigger('authPreloaderAnimation', [
+            state(AnimationVisibilityStep.Hidden, style({
+                'pointer-events': 'none',
+                opacity: '0'
+            })),
+            state(AnimationVisibilityStep.Visible, style({
+                'pointer-events': 'auto',
+                opacity: '1'
+            })),
+            transition(`${AnimationVisibilityStep.Hidden} <=> ${AnimationVisibilityStep.Visible}`, [
+                animate('400ms ease-in-out')
             ])
         ]),
         trigger('authFormAnimation', [
-            state(AnimationFormStep.Hidden, style({
+            state(AnimationVisibilityStep.Hidden, style({
                 'pointer-events': 'none',
                 'opacity': '0'
             })),
-            state(AnimationFormStep.Visible, style({
+            state(AnimationVisibilityStep.Visible, style({
                 'pointer-events': 'auto',
                 'opacity': '1'
             })),
-            transition(`${AnimationFormStep.Hidden} <=> ${AnimationFormStep.Visible}`, [
+            transition(`${AnimationVisibilityStep.Hidden} <=> ${AnimationVisibilityStep.Visible}`, [
                 animate('300ms ease-in-out')
             ])
         ]),
@@ -66,49 +83,100 @@ import { WWTextareaComponent } from '../../../../shared/components/textarea/text
 })
 export class AuthComponent {
     serverError: boolean = false;
-    serverConnected: boolean = false;
+    isLoading: boolean = false;
+
+    errorMessage: string = ' ';
+
+    loginForm: FormGroup;
 
     login: string = '';
     password: string = '';
 
-    @ViewChild('loginForm') loginForm!: TemplateRef<any>;
-    @ViewChild('registerForm') registerForm!: TemplateRef<any>;
-    @ViewChild('importForm') importForm!: TemplateRef<any>;
+    @ViewChild('loginFormBlock') loginFormBlock!: TemplateRef<any>;
+    @ViewChild('registerFormBlock') registerFormBlock!: TemplateRef<any>;
+    @ViewChild('importFormBlock') importFormBlock!: TemplateRef<any>;
 
     loadedBlockRef!: TemplateRef<any>;
-    formState: AnimationFormStep = AnimationFormStep.Hidden;
+    formState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
 
     loadingState: AnimationTwoStep = AnimationTwoStep.Start;
-    errorState: AnimationTwoStep = AnimationTwoStep.Start;
+    connectionErrorState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
+    requestErrorState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
+    preloaderState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
 
     protected readonly AlertType = AlertType;
     protected readonly ButtonSize = ButtonSize;
     protected readonly ButtonType = ButtonType;
 
+    constructor(private formBuilder: FormBuilder) {
+        this.loginForm = this.formBuilder.group({
+            Username: [
+                '',
+                [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+            ],
+            Password: [
+                '',
+                [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+            ]
+        })
+    }
+
+
     loadBlock(targetBlock: TemplateRef<any>) {
-        this.formState = AnimationFormStep.Hidden;
+        this.formState = AnimationVisibilityStep.Hidden;
+        this.requestErrorState = AnimationVisibilityStep.Hidden;
+        this.serverError = false;
         setTimeout(() => {
             this.loadedBlockRef = targetBlock;
-            this.formState = AnimationFormStep.Visible;
+            this.formState = AnimationVisibilityStep.Visible;
         }, 400);
     }
 
-    Login() {
-        console.log('Login');
+    LoginClick() {
+        console.log(this.loginForm);
+        this.isLoading = true;
+        this.serverError = false;
+        this.errorMessage = ' ';
+        this.requestErrorState = AnimationVisibilityStep.Hidden;
+        this.preloaderState = AnimationVisibilityStep.Visible;
+
+        setTimeout(() => {
+            this.onError('Incorrect login or password');
+        }, 1000)
+    }
+
+    RegistrationClick() {
+        //
+    }
+
+    ImportClick() {
+        //
     }
 
     // TODO Remove when server
     ngAfterViewInit() {
         setTimeout(() => {
-            this.loadedBlockRef = this.loginForm;
-            this.loading();
-        }, 1500)
+            this.onConnectionEstablished();
+        }, 500)
+        // OR
+        // setTimeout(() => {
+        //     this.connectionErrorState = AnimationVisibilityStep.Visible;
+        // }, 500)
     }
 
-    loading() {
+    onError(message: string): void {
+        this.isLoading = false;
+        this.serverError = true;
+        this.errorMessage = message;
+        this.requestErrorState = AnimationVisibilityStep.Visible;
+        this.preloaderState = AnimationVisibilityStep.Hidden;
+    }
+
+    onConnectionEstablished() {
+        this.loadedBlockRef = this.loginFormBlock;
         this.loadingState = AnimationTwoStep.Finish;
         setTimeout(() => {
-            this.formState = AnimationFormStep.Visible;
+            this.formState = AnimationVisibilityStep.Visible;
         }, 1100)
     }
 }
