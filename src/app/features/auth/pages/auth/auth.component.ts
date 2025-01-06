@@ -10,6 +10,7 @@ import { WWButtonComponent } from '../../../../shared/components/button/button.c
 import { WWInputComponent } from '../../../../shared/components/input/input.component';
 import { WWTextareaComponent } from '../../../../shared/components/textarea/textarea.component';
 import { WWPreloaderComponent } from '../../../../shared/components/preloader/preloader.component';
+import { InputValidState } from '../../../../shared/components/input/input.enums';
 
 @Component({
     selector: 'app-root',
@@ -88,9 +89,8 @@ export class AuthComponent {
     errorMessage: string = ' ';
 
     loginForm: FormGroup;
-
-    login: string = '';
-    password: string = '';
+    registrationForm: FormGroup;
+    importForm: FormGroup;
 
     @ViewChild('loginFormBlock') loginFormBlock!: TemplateRef<any>;
     @ViewChild('registerFormBlock') registerFormBlock!: TemplateRef<any>;
@@ -112,37 +112,63 @@ export class AuthComponent {
         this.loginForm = this.formBuilder.group({
             Username: [
                 '',
-                [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+                [Validators.required, Validators.minLength(4), Validators.maxLength(40)],
             ],
             Password: [
                 '',
                 [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
             ]
-        })
+        });
+        this.registrationForm = this.formBuilder.group({});
+        this.importForm = this.formBuilder.group({});
     }
 
 
     loadBlock(targetBlock: TemplateRef<any>) {
         this.formState = AnimationVisibilityStep.Hidden;
         this.requestErrorState = AnimationVisibilityStep.Hidden;
+        this.errorMessage = ' ';
         this.serverError = false;
+        this.loginForm.reset();
+        this.registrationForm.reset();
+        this.importForm.reset();
         setTimeout(() => {
             this.loadedBlockRef = targetBlock;
             this.formState = AnimationVisibilityStep.Visible;
         }, 400);
     }
 
+    checkFieldValidity(fieldName: string): InputValidState {
+        const targetField = this.loginForm.controls[fieldName];
+        if (targetField.touched && targetField.invalid) {
+            return InputValidState.Invalid;
+        }
+        return InputValidState.None;
+    }
+
     LoginClick() {
-        console.log(this.loginForm);
+        const formIsInvalid = this.loginForm.invalid;
+
+        this.loginForm.disable();
         this.isLoading = true;
         this.serverError = false;
         this.errorMessage = ' ';
         this.requestErrorState = AnimationVisibilityStep.Hidden;
         this.preloaderState = AnimationVisibilityStep.Visible;
 
-        setTimeout(() => {
+        if (formIsInvalid) {
             this.onError('Incorrect login or password');
-        }, 1000)
+            this.loginForm.enable();
+            return;
+        }
+
+        // this.loginForm.value
+        // this.loginForm.enable();
+
+        // setTimeout(() => {
+        //     this.loginForm.enable();
+        //     this.onError('Incorrect login or password');
+        // }, 2000)
     }
 
     RegistrationClick() {
@@ -179,4 +205,6 @@ export class AuthComponent {
             this.formState = AnimationVisibilityStep.Visible;
         }, 1100)
     }
+
+    protected readonly InputValidState = InputValidState;
 }

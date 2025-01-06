@@ -16,7 +16,7 @@
     </label>
     <input
         [type]="type"
-        class="form-control"
+        class="ww-input form-control"
         [ngClass]="{
             'form-control-lg': size === InputSize.Large,
             'form-control-sm': size === InputSize.Small,
@@ -24,11 +24,11 @@
             'is-invalid': validState === InputValidState.Invalid
         }"
         [id]="id"
-        [placeholder]="placeholder"
         autocomplete="off"
-        [disabled]="disabled"
-        [value]="model"
-        (input)="onInputChange($event)"
+        [disabled]="isDisabled"
+        [value]="value"
+        (input)="onInput($event)"
+        (blur)="onTouched()"
     >
     <label
         *ngIf="labelType === InputLabelType.Floating"

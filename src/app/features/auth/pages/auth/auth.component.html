@@ -35,7 +35,8 @@
                         id="login-input"
                         label="Username"
                         formControlName="Username"
-                        [(model)]="login"
+                        [validState]="checkFieldValidity('Username')"
+                        validatorMessage=""
                     />
                 </div>
                 <div class="auth-page-form-input">
@@ -44,7 +45,8 @@
                         type="password"
                         label="Password"
                         formControlName="Password"
-                        [(model)]="password"
+                        [validState]="checkFieldValidity('Password')"
+                        validatorMessage=""
                     />
                 </div>
             </form>
@@ -97,7 +99,6 @@
                 <ww-input
                     id="login-reg"
                     label="Username"
-                    [(model)]="login"
                 />
             </div>
             <div class="auth-page-form-input">
@@ -105,7 +106,6 @@
                     id="pass-reg"
                     type="password"
                     label="Password"
-                    [(model)]="password"
                 />
             </div>
             <div class="auth-page-form-input">
@@ -113,7 +113,6 @@
                     id="pass-again-reg"
                     type="password"
                     label="Repeat password"
-                    [(model)]="password"
                 />
             </div>
             <div class="auth-page-form-info">
@@ -159,7 +158,6 @@
                     label="Data JSON"
                     id="import-textarea"
                     [size]="6"
-                    [(model)]="password"
                 />
             </div>
             <div class="auth-page-form-info">
