@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+import { NgIf, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertType } from '../../../../shared/components/alert/alert.enums';
@@ -11,6 +11,10 @@ import { WWInputComponent } from '../../../../shared/components/input/input.comp
 import { WWTextareaComponent } from '../../../../shared/components/textarea/textarea.component';
 import { WWPreloaderComponent } from '../../../../shared/components/preloader/preloader.component';
 import { InputValidState } from '../../../../shared/components/input/input.enums';
+import { AppDataService } from '../../../../core/services/app-data.service';
+import { AppStatusModel } from '../../../../core/models/status.models';
+import { passwordMatchValidator } from '../../../../core/validators/password-match.validator';
+import { jsonValidator } from '../../../../core/validators/json.validator';
 
 @Component({
     selector: 'app-root',
@@ -18,6 +22,7 @@ import { InputValidState } from '../../../../shared/components/input/input.enums
     imports: [
         NgOptimizedImage,
         NgTemplateOutlet,
+        NgIf,
         ReactiveFormsModule,
         WWButtonComponent,
         WWInputComponent,
@@ -108,21 +113,52 @@ export class AuthComponent {
     protected readonly ButtonSize = ButtonSize;
     protected readonly ButtonType = ButtonType;
 
-    constructor(private formBuilder: FormBuilder) {
+    constructor(
+        private formBuilder: FormBuilder,
+        private appDataService: AppDataService
+    ) {
         this.loginForm = this.formBuilder.group({
             Username: [
                 '',
-                [Validators.required, Validators.minLength(4), Validators.maxLength(40)],
+                [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
             ],
             Password: [
                 '',
                 [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
             ]
         });
-        this.registrationForm = this.formBuilder.group({});
-        this.importForm = this.formBuilder.group({});
+        this.registrationForm = this.formBuilder.group(
+            {
+                Username: [
+                    '',
+                    [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+                ],
+                Password: [
+                    '',
+                    [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+                ],
+                RepeatPassword: [
+                    '',
+                    [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+                ]
+            },
+            { validators: passwordMatchValidator() }
+        );
+        this.importForm = this.formBuilder.group({
+            ImportData: [
+                '',
+                [Validators.required, jsonValidator()],
+            ]
+        });
     }
 
+    get appStatus(): AppStatusModel | null {
+        return this.appDataService.appStatus;
+    }
+
+    get passwordMismatch(): boolean {
+        return this.registrationForm.errors?.['passwordMismatch'];
+    }
 
     loadBlock(targetBlock: TemplateRef<any>) {
         this.formState = AnimationVisibilityStep.Hidden;
@@ -138,64 +174,84 @@ export class AuthComponent {
         }, 400);
     }
 
-    checkFieldValidity(fieldName: string): InputValidState {
-        const targetField = this.loginForm.controls[fieldName];
-        if (targetField.touched && targetField.invalid) {
+    checkFieldValidity(form: FormGroup, fieldName: string, additionalFactor: boolean = false): InputValidState {
+        const targetField = form.controls[fieldName];
+        if (targetField.touched && (targetField.invalid || additionalFactor)) {
             return InputValidState.Invalid;
         }
         return InputValidState.None;
     }
 
-    LoginClick() {
-        const formIsInvalid = this.loginForm.invalid;
-
-        this.loginForm.disable();
+    startLoading() {
         this.isLoading = true;
         this.serverError = false;
         this.errorMessage = ' ';
         this.requestErrorState = AnimationVisibilityStep.Hidden;
         this.preloaderState = AnimationVisibilityStep.Visible;
+        this.loginForm.disable();
+        this.registrationForm.disable();
+        this.importForm.disable();
+    }
+
+    finishLoading() {
+        this.isLoading = false;
+        this.preloaderState = AnimationVisibilityStep.Hidden;
+        this.loginForm.enable();
+        this.registrationForm.enable();
+        this.importForm.enable();
+    }
+
+    loginClick() {
+        const formIsInvalid = this.loginForm.invalid;
 
         if (formIsInvalid) {
             this.onError('Incorrect login or password');
-            this.loginForm.enable();
             return;
         }
 
-        // this.loginForm.value
-        // this.loginForm.enable();
+        this.startLoading();
 
-        // setTimeout(() => {
-        //     this.loginForm.enable();
-        //     this.onError('Incorrect login or password');
-        // }, 2000)
+        // send request
+        // this.finishLoading();
     }
 
-    RegistrationClick() {
+    registrationClick() {
+        const formIsInvalid = this.registrationForm.invalid;
+
+        if (formIsInvalid) {
+            this.onError('Incorrect data. Username and password must be at least 6 and no more than 40 characters long. The entered passwords must match.');
+            return;
+        }
+
+        this.startLoading();
+
+        // send request
+        // this.finishLoading();
+    }
+
+    importClick() {
         //
     }
 
-    ImportClick() {
-        //
-    }
-
-    // TODO Remove when server
     ngAfterViewInit() {
-        setTimeout(() => {
-            this.onConnectionEstablished();
-        }, 500)
-        // OR
-        // setTimeout(() => {
-        //     this.connectionErrorState = AnimationVisibilityStep.Visible;
-        // }, 500)
+        this.appDataService.getAppStatus().subscribe({
+            next: (data) => {
+                if (data.appName != 'WinterWay-Server') {
+                    this.connectionErrorState = AnimationVisibilityStep.Visible;
+                    return;
+                }
+                this.onConnectionEstablished();
+            },
+            error: () => {
+                this.connectionErrorState = AnimationVisibilityStep.Visible;
+            }
+        })
     }
 
     onError(message: string): void {
-        this.isLoading = false;
         this.serverError = true;
         this.errorMessage = message;
         this.requestErrorState = AnimationVisibilityStep.Visible;
-        this.preloaderState = AnimationVisibilityStep.Hidden;
     }
 
     onConnectionEstablished() {
@@ -205,6 +261,4 @@ export class AuthComponent {
             this.formState = AnimationVisibilityStep.Visible;
         }, 1100)
     }
-
-    protected readonly InputValidState = InputValidState;
 }

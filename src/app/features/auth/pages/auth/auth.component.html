@@ -35,8 +35,7 @@
                         id="login-input"
                         label="Username"
                         formControlName="Username"
-                        [validState]="checkFieldValidity('Username')"
-                        validatorMessage=""
+                        [validState]="checkFieldValidity(loginForm, 'Username')"
                     />
                 </div>
                 <div class="auth-page-form-input">
@@ -45,8 +44,7 @@
                         type="password"
                         label="Password"
                         formControlName="Password"
-                        [validState]="checkFieldValidity('Password')"
-                        validatorMessage=""
+                        [validState]="checkFieldValidity(loginForm, 'Password')"
                     />
                 </div>
             </form>
@@ -69,11 +67,12 @@
                     [size]="ButtonSize.Large"
                     [type]="ButtonType.Primary"
                     [disabled]="isLoading"
-                    (clicked)="LoginClick()"
+                    (clicked)="loginClick()"
                 />
             </div>
             <div class="auth-page-button-additional">
                 <ww-button
+                    *ngIf="appStatus?.registrationIsAvailable"
                     label="Register"
                     [size]="ButtonSize.Small"
                     [type]="ButtonType.Primary"
@@ -81,6 +80,7 @@
                     (clicked)="loadBlock(registerFormBlock)"
                 />
                 <ww-button
+                    *ngIf="appStatus?.importIsAvailable"
                     label="Import data"
                     [size]="ButtonSize.Small"
                     [type]="ButtonType.Primary"
@@ -95,26 +95,35 @@
             class="auth-page-form"
         >
             <h1>Registration</h1>
-            <div class="auth-page-form-input">
-                <ww-input
-                    id="login-reg"
-                    label="Username"
-                />
-            </div>
-            <div class="auth-page-form-input">
-                <ww-input
-                    id="pass-reg"
-                    type="password"
-                    label="Password"
-                />
-            </div>
-            <div class="auth-page-form-input">
-                <ww-input
-                    id="pass-again-reg"
-                    type="password"
-                    label="Repeat password"
-                />
-            </div>
+            <form [formGroup]="registrationForm">
+                <div class="auth-page-form-input">
+                    <ww-input
+                        id="login-reg"
+                        label="Username"
+                        formControlName="Username"
+                        [validState]="checkFieldValidity(registrationForm, 'Username')"
+                    />
+                </div>
+                <div class="auth-page-form-input">
+                    <ww-input
+                        id="pass-reg"
+                        type="password"
+                        label="Password"
+                        formControlName="Password"
+                        [validState]="checkFieldValidity(registrationForm, 'Password')"
+                    />
+                </div>
+                <div class="auth-page-form-input">
+                    <ww-input
+                        id="pass-again-reg"
+                        type="password"
+                        label="Repeat password"
+                        formControlName="RepeatPassword"
+                        [validState]="checkFieldValidity(registrationForm, 'RepeatPassword', passwordMismatch)"
+
+                    />
+                </div>
+            </form>
             <div class="auth-page-form-info">
                 <div class="auth-page-form-info-preloader">
                     <ww-preloader
@@ -134,7 +143,7 @@
                     [size]="ButtonSize.Large"
                     [type]="ButtonType.Primary"
                     [disabled]="isLoading"
-                    (clicked)="RegistrationClick()"
+                    (clicked)="registrationClick()"
                 />
             </div>
             <div class="auth-page-button-back">
@@ -179,7 +188,7 @@
                     [size]="ButtonSize.Large"
                     [type]="ButtonType.Primary"
                     [disabled]="isLoading"
-                    (clicked)="ImportClick()"
+                    (clicked)="importClick()"
                 />
             </div>
             <div class="auth-page-button-back">
