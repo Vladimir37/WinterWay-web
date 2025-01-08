@@ -1,6 +1,10 @@
 .ww-alert {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     margin-bottom: 1rem;
     padding: 1rem;
+    line-height: 1.5em;
     color: var(--lightBlackTextColor);
     &.success {
         background-color: var(--successColor);

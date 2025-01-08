@@ -8,9 +8,24 @@
     </label>
     <textarea
         class="form-control"
+        [ngClass]="{
+            'is-valid': validState === InputValidState.Valid,
+            'is-invalid': validState === InputValidState.Invalid
+        }"
         [id]="id"
         [rows]="size"
-        [value]="model"
-        (input)="onInputChange($event)"
+        [disabled]="isDisabled"
+        [value]="value"
+        (input)="onInput($event)"
+        (blur)="onTouched()"
     ></textarea>
+    <div
+        *ngIf="validState !== InputValidState.None"
+        [ngClass]="{
+            'valid-feedback': validState === InputValidState.Valid,
+            'invalid-feedback': validState === InputValidState.Invalid
+        }"
+    >
+        {{ validatorMessage }}
+    </div>
 </div>

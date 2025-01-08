@@ -5,7 +5,7 @@ export function jsonValidator(): ValidatorFn {
         const value = formGroup.value;
 
         try {
-            JSON.parse(formGroup.value);
+            JSON.parse(value);
             return null
         } catch (e) {
             return {

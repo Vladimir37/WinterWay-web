@@ -7,6 +7,7 @@
             'danger': alertType === AlertType.Danger,
             'warning': alertType === AlertType.Warning,
         }"
+        [ngStyle]="minHeightStyles"
     >
         <div *ngIf="title || subtitle">
             <strong *ngIf="title">{{ title }}</strong>&nbsp;<span *ngIf="subtitle">{{ subtitle }}</span>

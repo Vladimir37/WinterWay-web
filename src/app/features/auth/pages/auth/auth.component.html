@@ -120,7 +120,6 @@
                         label="Repeat password"
                         formControlName="RepeatPassword"
                         [validState]="checkFieldValidity(registrationForm, 'RepeatPassword', passwordMismatch)"
-
                     />
                 </div>
             </form>
@@ -134,6 +133,7 @@
                     class="login-form-error"
                     [alertType]="AlertType.Danger"
                     [subtitle]="errorMessage"
+                    [lineHeight]="2"
                     [@authErrorAnimation]="requestErrorState"
                 />
             </div>
@@ -162,13 +162,17 @@
             class="auth-page-form"
         >
             <h1>Import data</h1>
-            <div class="auth-page-form-input">
-                <ww-textarea
-                    label="Data JSON"
-                    id="import-textarea"
-                    [size]="6"
-                />
-            </div>
+            <form [formGroup]="importForm">
+                <div class="auth-page-form-input">
+                    <ww-textarea
+                        label="Data JSON"
+                        id="import-textarea"
+                        [size]="6"
+                        formControlName="ImportData"
+                        [validState]="checkFieldValidity(importForm, 'ImportData')"
+                    />
+                </div>
+            </form>
             <div class="auth-page-form-info">
                 <div class="auth-page-form-info-preloader">
                     <ww-preloader

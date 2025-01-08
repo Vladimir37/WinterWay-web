@@ -1,3 +1,4 @@
+import { finalize } from 'rxjs';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NgIf, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
@@ -15,6 +16,8 @@ import { AppDataService } from '../../../../core/services/app-data.service';
 import { AppStatusModel } from '../../../../core/models/status.models';
 import { passwordMatchValidator } from '../../../../core/validators/password-match.validator';
 import { jsonValidator } from '../../../../core/validators/json.validator';
+import { AuthService } from '../../../../core/services/auth.service';
+import { BackupService } from '../../../../core/services/backup.service';
 
 @Component({
     selector: 'app-root',
@@ -88,6 +91,7 @@ import { jsonValidator } from '../../../../core/validators/json.validator';
     ]
 })
 export class AuthComponent {
+    serverConnected: boolean = false;
     serverError: boolean = false;
     isLoading: boolean = false;
 
@@ -115,7 +119,9 @@ export class AuthComponent {
 
     constructor(
         private formBuilder: FormBuilder,
-        private appDataService: AppDataService
+        private appDataService: AppDataService,
+        private authService: AuthService,
+        private backupService: BackupService
     ) {
         this.loginForm = this.formBuilder.group({
             Username: [
@@ -158,6 +164,11 @@ export class AuthComponent {
 
     get passwordMismatch(): boolean {
         return this.registrationForm.errors?.['passwordMismatch'];
+    }
+
+    ngAfterViewInit() {
+        this.getAppStatus();
+        this.getBackgroundStatus();
     }
 
     loadBlock(targetBlock: TemplateRef<any>) {
@@ -211,8 +222,22 @@ export class AuthComponent {
 
         this.startLoading();
 
-        // send request
-        // this.finishLoading();
+        this.authService.login(this.loginForm.value)
+            .pipe(
+                finalize(() => {
+                    this.finishLoading();
+                })
+            )
+            .subscribe({
+                next: (data) => {
+                    // TODO Redirect to the system
+                    console.log('LOGGED');
+                    console.log(data);
+                },
+                error: (err) => {
+                    this.onError(err?.error?.errorMessage);
+                }
+            });
     }
 
     registrationClick() {
@@ -225,36 +250,83 @@ export class AuthComponent {
 
         this.startLoading();
 
-        // send request
-        // this.finishLoading();
+        this.authService.registration(this.registrationForm.value)
+            .pipe(
+                finalize(() => {
+                    this.finishLoading();
+                })
+            )
+            .subscribe({
+                next: () => {
+                    this.getAppStatus();
+                    this.loadBlock(this.loginFormBlock);
+                },
+                error: (err) => {
+                    this.onError(err?.error?.errorMessage);
+                }
+            });
     }
 
     importClick() {
-        //
+        const formIsInvalid = this.importForm.invalid;
+
+        if (formIsInvalid) {
+            this.onError('Incorrect data format');
+            return;
+        }
+
+        this.startLoading();
+
+        this.backupService.import(this.importForm.value?.['ImportData'])
+            .pipe(
+                finalize(() => {
+                    this.finishLoading();
+                })
+            )
+            .subscribe({
+                next: () => {
+                    this.getAppStatus();
+                    this.loadBlock(this.loginFormBlock);
+                },
+                error: (err) => {
+                    this.onError(err?.error?.errorMessage);
+                }
+            });
     }
 
-    ngAfterViewInit() {
+    getAppStatus() {
         this.appDataService.getAppStatus().subscribe({
             next: (data) => {
                 if (data.appName != 'WinterWay-Server') {
                     this.connectionErrorState = AnimationVisibilityStep.Visible;
                     return;
                 }
-                this.onConnectionEstablished();
+                if (!this.serverConnected) {
+                    this.onConnectionEstablished();
+                }
             },
             error: () => {
                 this.connectionErrorState = AnimationVisibilityStep.Visible;
             }
-        })
+        });
     }
 
-    onError(message: string): void {
+    getBackgroundStatus() {
+        this.appDataService.getBackgroundStatus().subscribe({
+            error: () => {
+                this.connectionErrorState = AnimationVisibilityStep.Visible;
+            }
+        });
+    }
+
+    onError(message: string = 'Server error'): void {
         this.serverError = true;
         this.errorMessage = message;
         this.requestErrorState = AnimationVisibilityStep.Visible;
     }
 
     onConnectionEstablished() {
+        this.serverConnected = true;
         this.loadedBlockRef = this.loginFormBlock;
         this.loadingState = AnimationTwoStep.Finish;
         setTimeout(() => {
