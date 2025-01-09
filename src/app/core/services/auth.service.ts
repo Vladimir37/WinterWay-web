@@ -3,6 +3,7 @@ import { UserStatusModel } from '../models/status.models';
 import { RequestService } from './request.service';
 import { LoginDTO, RegistrationDTO } from '../models/auth.models';
 import { catchError, tap, throwError } from 'rxjs';
+import { ApiSuccessModel } from '../models/api.models';
 
 @Injectable({
     providedIn: 'root'
@@ -28,7 +29,18 @@ export class AuthService {
     }
 
     registration(registrationData: RegistrationDTO) {
-        return this.request.post<UserStatusModel>('auth/signup', registrationData).pipe(
+        return this.request.post<ApiSuccessModel>('auth/signup', registrationData).pipe(
+            catchError(err => {
+                return throwError(() => err);
+            })
+        );
+    }
+
+    getUserStatus() {
+        return this.request.get<UserStatusModel>('auth/user-status').pipe(
+            tap(data => {
+                this._userStatus = data;
+            }),
             catchError(err => {
                 return throwError(() => err);
             })

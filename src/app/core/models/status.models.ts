@@ -21,8 +21,8 @@ class BackgroundCount {
 
 export class BackgroundStatusModel {
     constructor(
+        public appName: string,
         public serverURL: string,
-        public name: string,
         public dir: string,
         public extension: string,
         public count: BackgroundCount

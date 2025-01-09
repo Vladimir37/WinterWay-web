@@ -1,4 +1,4 @@
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NgIf, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
@@ -92,10 +92,10 @@ import { BackupService } from '../../../../core/services/backup.service';
 })
 export class AuthComponent {
     serverConnected: boolean = false;
-    serverError: boolean = false;
     isLoading: boolean = false;
 
-    errorMessage: string = ' ';
+    requestAlertType: AlertType = AlertType.Danger;
+    requestAlertMessage: string = ' ';
 
     loginForm: FormGroup;
     registrationForm: FormGroup;
@@ -110,7 +110,7 @@ export class AuthComponent {
 
     loadingState: AnimationTwoStep = AnimationTwoStep.Start;
     connectionErrorState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
-    requestErrorState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
+    requestAlertState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
     preloaderState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
 
     protected readonly AlertType = AlertType;
@@ -167,15 +167,30 @@ export class AuthComponent {
     }
 
     ngAfterViewInit() {
-        this.getAppStatus();
-        this.getBackgroundStatus();
+        forkJoin({
+            AppStatus: this.appDataService.getAppStatus(),
+            BackgroundStatus: this.appDataService.getBackgroundStatus()
+        }).subscribe({
+            next: (results) => {
+                if (
+                    results.AppStatus?.appName == 'WinterWay-Server' &&
+                    results.BackgroundStatus?.appName == 'WinterWay-Images'
+                ) {
+                    this.getUserStatus();
+                    return;
+                }
+                this.connectionErrorState = AnimationVisibilityStep.Visible;
+            },
+            error: () => {
+                this.connectionErrorState = AnimationVisibilityStep.Visible;
+            }
+        })
     }
 
     loadBlock(targetBlock: TemplateRef<any>) {
         this.formState = AnimationVisibilityStep.Hidden;
-        this.requestErrorState = AnimationVisibilityStep.Hidden;
-        this.errorMessage = ' ';
-        this.serverError = false;
+        this.requestAlertState = AnimationVisibilityStep.Hidden;
+        this.requestAlertMessage = ' ';
         this.loginForm.reset();
         this.registrationForm.reset();
         this.importForm.reset();
@@ -195,9 +210,8 @@ export class AuthComponent {
 
     startLoading() {
         this.isLoading = true;
-        this.serverError = false;
-        this.errorMessage = ' ';
-        this.requestErrorState = AnimationVisibilityStep.Hidden;
+        this.requestAlertMessage = ' ';
+        this.requestAlertState = AnimationVisibilityStep.Hidden;
         this.preloaderState = AnimationVisibilityStep.Visible;
         this.loginForm.disable();
         this.registrationForm.disable();
@@ -216,7 +230,7 @@ export class AuthComponent {
         const formIsInvalid = this.loginForm.invalid;
 
         if (formIsInvalid) {
-            this.onError('Incorrect login or password');
+            this.onErrorAlert('Incorrect login or password');
             return;
         }
 
@@ -229,13 +243,13 @@ export class AuthComponent {
                 })
             )
             .subscribe({
-                next: (data) => {
+                next: (response) => {
                     // TODO Redirect to the system
                     console.log('LOGGED');
-                    console.log(data);
+                    console.log(response);
                 },
                 error: (err) => {
-                    this.onError(err?.error?.errorMessage);
+                    this.onErrorAlert(err?.error?.errorMessage);
                 }
             });
     }
@@ -244,7 +258,7 @@ export class AuthComponent {
         const formIsInvalid = this.registrationForm.invalid;
 
         if (formIsInvalid) {
-            this.onError('Incorrect data. Username and password must be at least 6 and no more than 40 characters long. The entered passwords must match.');
+            this.onErrorAlert('Incorrect data. Username and password must be at least 6 and no more than 40 characters long. The entered passwords must match.');
             return;
         }
 
@@ -258,11 +272,13 @@ export class AuthComponent {
             )
             .subscribe({
                 next: () => {
+                    const username = this.registrationForm.value.Username;
                     this.getAppStatus();
                     this.loadBlock(this.loginFormBlock);
+                    this.onSuccessAlert(`User \"${username}\" has been successfully registered`);
                 },
                 error: (err) => {
-                    this.onError(err?.error?.errorMessage);
+                    this.onErrorAlert(err?.error?.errorMessage);
                 }
             });
     }
@@ -271,7 +287,7 @@ export class AuthComponent {
         const formIsInvalid = this.importForm.invalid;
 
         if (formIsInvalid) {
-            this.onError('Incorrect data format');
+            this.onErrorAlert('Incorrect data format');
             return;
         }
 
@@ -284,45 +300,49 @@ export class AuthComponent {
                 })
             )
             .subscribe({
-                next: () => {
+                next: (response) => {
+                    const username = response.operation.split('|')[1];
                     this.getAppStatus();
                     this.loadBlock(this.loginFormBlock);
+                    this.onSuccessAlert(`User \"${username}\" has been successfully imported`);
                 },
                 error: (err) => {
-                    this.onError(err?.error?.errorMessage);
+                    this.onErrorAlert(err?.error?.errorMessage);
                 }
             });
     }
 
     getAppStatus() {
         this.appDataService.getAppStatus().subscribe({
-            next: (data) => {
-                if (data.appName != 'WinterWay-Server') {
-                    this.connectionErrorState = AnimationVisibilityStep.Visible;
-                    return;
-                }
-                if (!this.serverConnected) {
-                    this.onConnectionEstablished();
-                }
+            error: () => {
+                this.connectionErrorState = AnimationVisibilityStep.Visible;
+            }
+        });
+    }
+
+    getUserStatus() {
+        this.authService.getUserStatus().subscribe({
+            next: (response) => {
+                console.log('AUTH');
+                // todo redirect to the system
             },
-            error: () => {
-                this.connectionErrorState = AnimationVisibilityStep.Visible;
+            error: (err) => {
+                console.log('NOT AUTH')
+                this.onConnectionEstablished();
             }
-        });
+        })
     }
 
-    getBackgroundStatus() {
-        this.appDataService.getBackgroundStatus().subscribe({
-            error: () => {
-                this.connectionErrorState = AnimationVisibilityStep.Visible;
-            }
-        });
+    onSuccessAlert(message: string = 'Success'): void {
+        this.requestAlertType = AlertType.Success;
+        this.requestAlertMessage = message;
+        this.requestAlertState = AnimationVisibilityStep.Visible;
     }
 
-    onError(message: string = 'Server error'): void {
-        this.serverError = true;
-        this.errorMessage = message;
-        this.requestErrorState = AnimationVisibilityStep.Visible;
+    onErrorAlert(message: string = 'Server error'): void {
+        this.requestAlertType = AlertType.Danger;
+        this.requestAlertMessage = message;
+        this.requestAlertState = AnimationVisibilityStep.Visible;
     }
 
     onConnectionEstablished() {

@@ -55,10 +55,9 @@
                     />
                 </div>
                 <ww-alert
-                    class="login-form-error"
-                    [alertType]="AlertType.Danger"
-                    [subtitle]="errorMessage"
-                    [@authErrorAnimation]="requestErrorState"
+                    [alertType]="requestAlertType"
+                    [subtitle]="requestAlertMessage"
+                    [@authErrorAnimation]="requestAlertState"
                 />
             </div>
             <div class="auth-page-button-main">
@@ -130,11 +129,10 @@
                     />
                 </div>
                 <ww-alert
-                    class="login-form-error"
-                    [alertType]="AlertType.Danger"
-                    [subtitle]="errorMessage"
+                    [alertType]="requestAlertType"
+                    [subtitle]="requestAlertMessage"
                     [lineHeight]="2"
-                    [@authErrorAnimation]="requestErrorState"
+                    [@authErrorAnimation]="requestAlertState"
                 />
             </div>
             <div class="auth-page-button-main">
@@ -180,10 +178,9 @@
                     />
                 </div>
                 <ww-alert
-                    class="login-form-error"
-                    [alertType]="AlertType.Danger"
-                    [subtitle]="errorMessage"
-                    [@authErrorAnimation]="requestErrorState"
+                    [alertType]="requestAlertType"
+                    [subtitle]="requestAlertMessage"
+                    [@authErrorAnimation]="requestAlertState"
                 />
             </div>
             <div class="auth-page-button-main">
