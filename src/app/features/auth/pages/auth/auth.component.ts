@@ -2,9 +2,10 @@ import { finalize, forkJoin } from 'rxjs';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NgIf, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertType } from '../../../../shared/components/alert/alert.enums';
-import { AnimationTwoStep, AnimationVisibilityStep } from './animation-steps.enum';
+import { AnimationTwoStep } from '../../../../core/enums/animation-steps.enum';
 import { ButtonSize, ButtonType } from '../../../../shared/components/button/button.enums';
 import { WWAlertComponent } from '../../../../shared/components/alert/alert.component';
 import { WWButtonComponent } from '../../../../shared/components/button/button.component';
@@ -37,60 +38,62 @@ import { BackupService } from '../../../../core/services/backup.service';
     styleUrl: './auth.component.scss',
     animations: [
         trigger('authLogoAnimation', [
-            state(AnimationTwoStep.Start, style({
-                transform: 'scale(2)',
-                top: '200px'
+            state(AnimationTwoStep.First, style({
+                'transform': 'scale(2)',
+                'top': '200px'
             })),
-            state(AnimationTwoStep.Finish, style({
-                transform: 'scale(1)',
-                top: '0'
+            state(AnimationTwoStep.Second, style({
+                'transform': 'scale(1)',
+                'top': '0'
             })),
-            transition(`${AnimationTwoStep.Start} <=> ${AnimationTwoStep.Finish}`, [
+            transition(`${AnimationTwoStep.First} <=> ${AnimationTwoStep.Second}`, [
                 animate('1000ms ease-in-out')
             ])
         ]),
         trigger('authErrorAnimation', [
-            state(AnimationVisibilityStep.Hidden, style({
+            state(AnimationTwoStep.First, style({
                 'pointer-events': 'none',
-                opacity: '0'
+                'opacity': '0'
             })),
-            state(AnimationVisibilityStep.Visible, style({
+            state(AnimationTwoStep.Second, style({
                 'pointer-events': 'auto',
-                opacity: '1'
+                'opacity': '1'
             })),
-            transition(`${AnimationVisibilityStep.Hidden} <=> ${AnimationVisibilityStep.Visible}`, [
+            transition(`${AnimationTwoStep.First} <=> ${AnimationTwoStep.Second}`, [
                 animate('400ms ease-in-out')
             ])
         ]),
         trigger('authPreloaderAnimation', [
-            state(AnimationVisibilityStep.Hidden, style({
+            state(AnimationTwoStep.First, style({
                 'pointer-events': 'none',
-                opacity: '0'
+                'opacity': '0'
             })),
-            state(AnimationVisibilityStep.Visible, style({
+            state(AnimationTwoStep.Second, style({
                 'pointer-events': 'auto',
-                opacity: '1'
+                'opacity': '1'
             })),
-            transition(`${AnimationVisibilityStep.Hidden} <=> ${AnimationVisibilityStep.Visible}`, [
+            transition(`${AnimationTwoStep.First} <=> ${AnimationTwoStep.Second}`, [
                 animate('400ms ease-in-out')
             ])
         ]),
         trigger('authFormAnimation', [
-            state(AnimationVisibilityStep.Hidden, style({
+            state(AnimationTwoStep.First, style({
                 'pointer-events': 'none',
                 'opacity': '0'
             })),
-            state(AnimationVisibilityStep.Visible, style({
+            state(AnimationTwoStep.Second, style({
                 'pointer-events': 'auto',
                 'opacity': '1'
             })),
-            transition(`${AnimationVisibilityStep.Hidden} <=> ${AnimationVisibilityStep.Visible}`, [
+            transition(`${AnimationTwoStep.First} <=> ${AnimationTwoStep.Second}`, [
                 animate('300ms ease-in-out')
             ])
         ]),
     ]
 })
 export class AuthComponent {
+    returnUrl: string = '/';
+
     serverConnected: boolean = false;
     isLoading: boolean = false;
 
@@ -105,13 +108,15 @@ export class AuthComponent {
     @ViewChild('registerFormBlock') registerFormBlock!: TemplateRef<any>;
     @ViewChild('importFormBlock') importFormBlock!: TemplateRef<any>;
 
-    loadedBlockRef!: TemplateRef<any>;
-    formState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
+    allPageState: AnimationTwoStep = AnimationTwoStep.Second;
 
-    loadingState: AnimationTwoStep = AnimationTwoStep.Start;
-    connectionErrorState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
-    requestAlertState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
-    preloaderState: AnimationVisibilityStep = AnimationVisibilityStep.Hidden;
+    loadedBlockRef!: TemplateRef<any>;
+    formState: AnimationTwoStep = AnimationTwoStep.First;
+
+    loadingState: AnimationTwoStep = AnimationTwoStep.First;
+    connectionErrorState: AnimationTwoStep = AnimationTwoStep.First;
+    requestAlertState: AnimationTwoStep = AnimationTwoStep.First;
+    preloaderState: AnimationTwoStep = AnimationTwoStep.First;
 
     protected readonly AlertType = AlertType;
     protected readonly ButtonSize = ButtonSize;
@@ -119,6 +124,8 @@ export class AuthComponent {
 
     constructor(
         private formBuilder: FormBuilder,
+        private router: Router,
+        private route: ActivatedRoute,
         private appDataService: AppDataService,
         private authService: AuthService,
         private backupService: BackupService
@@ -167,6 +174,8 @@ export class AuthComponent {
     }
 
     ngAfterViewInit() {
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
         forkJoin({
             AppStatus: this.appDataService.getAppStatus(),
             BackgroundStatus: this.appDataService.getBackgroundStatus()
@@ -179,24 +188,31 @@ export class AuthComponent {
                     this.getUserStatus();
                     return;
                 }
-                this.connectionErrorState = AnimationVisibilityStep.Visible;
+                this.connectionErrorState = AnimationTwoStep.Second;
             },
             error: () => {
-                this.connectionErrorState = AnimationVisibilityStep.Visible;
+                this.connectionErrorState = AnimationTwoStep.Second;
             }
         })
     }
 
+    redirectToPage(url: string) {
+        this.allPageState = AnimationTwoStep.First;
+        setTimeout(() => {
+            this.router.navigate([url]);
+        }, 500);
+    }
+
     loadBlock(targetBlock: TemplateRef<any>) {
-        this.formState = AnimationVisibilityStep.Hidden;
-        this.requestAlertState = AnimationVisibilityStep.Hidden;
+        this.formState = AnimationTwoStep.First;
+        this.requestAlertState = AnimationTwoStep.First;
         this.requestAlertMessage = ' ';
         this.loginForm.reset();
         this.registrationForm.reset();
         this.importForm.reset();
         setTimeout(() => {
             this.loadedBlockRef = targetBlock;
-            this.formState = AnimationVisibilityStep.Visible;
+            this.formState = AnimationTwoStep.Second;
         }, 400);
     }
 
@@ -211,8 +227,8 @@ export class AuthComponent {
     startLoading() {
         this.isLoading = true;
         this.requestAlertMessage = ' ';
-        this.requestAlertState = AnimationVisibilityStep.Hidden;
-        this.preloaderState = AnimationVisibilityStep.Visible;
+        this.requestAlertState = AnimationTwoStep.First;
+        this.preloaderState = AnimationTwoStep.Second;
         this.loginForm.disable();
         this.registrationForm.disable();
         this.importForm.disable();
@@ -220,7 +236,7 @@ export class AuthComponent {
 
     finishLoading() {
         this.isLoading = false;
-        this.preloaderState = AnimationVisibilityStep.Hidden;
+        this.preloaderState = AnimationTwoStep.First;
         this.loginForm.enable();
         this.registrationForm.enable();
         this.importForm.enable();
@@ -244,9 +260,7 @@ export class AuthComponent {
             )
             .subscribe({
                 next: (response) => {
-                    // TODO Redirect to the system
-                    console.log('LOGGED');
-                    console.log(response);
+                    this.redirectToPage('/');
                 },
                 error: (err) => {
                     this.onErrorAlert(err?.error?.errorMessage);
@@ -315,7 +329,7 @@ export class AuthComponent {
     getAppStatus() {
         this.appDataService.getAppStatus().subscribe({
             error: () => {
-                this.connectionErrorState = AnimationVisibilityStep.Visible;
+                this.connectionErrorState = AnimationTwoStep.Second;
             }
         });
     }
@@ -323,11 +337,9 @@ export class AuthComponent {
     getUserStatus() {
         this.authService.getUserStatus().subscribe({
             next: (response) => {
-                console.log('AUTH');
-                // todo redirect to the system
+                this.redirectToPage(this.returnUrl);
             },
             error: (err) => {
-                console.log('NOT AUTH')
                 this.onConnectionEstablished();
             }
         })
@@ -336,21 +348,21 @@ export class AuthComponent {
     onSuccessAlert(message: string = 'Success'): void {
         this.requestAlertType = AlertType.Success;
         this.requestAlertMessage = message;
-        this.requestAlertState = AnimationVisibilityStep.Visible;
+        this.requestAlertState = AnimationTwoStep.Second;
     }
 
     onErrorAlert(message: string = 'Server error'): void {
         this.requestAlertType = AlertType.Danger;
         this.requestAlertMessage = message;
-        this.requestAlertState = AnimationVisibilityStep.Visible;
+        this.requestAlertState = AnimationTwoStep.Second;
     }
 
     onConnectionEstablished() {
         this.serverConnected = true;
         this.loadedBlockRef = this.loginFormBlock;
-        this.loadingState = AnimationTwoStep.Finish;
+        this.loadingState = AnimationTwoStep.Second;
         setTimeout(() => {
-            this.formState = AnimationVisibilityStep.Visible;
+            this.formState = AnimationTwoStep.Second;
         }, 1100)
     }
 }

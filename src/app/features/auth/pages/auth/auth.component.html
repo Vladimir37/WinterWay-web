@@ -1,5 +1,8 @@
 <div class="auth-page">
-    <div class="auth-page-content">
+    <div
+        class="auth-page-content"
+        [@authPreloaderAnimation]="allPageState"
+    >
         <div class="auth-page-content-logo-container">
             <ww-alert
                 [alertType]="AlertType.Danger"

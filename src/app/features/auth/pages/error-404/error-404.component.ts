@@ -1,0 +1,11 @@
+import { Component } from '@angular/core';
+
+@Component({
+    standalone: true,
+    selector: 'error-404',
+    templateUrl: './error-404.component.html',
+    styleUrl: './error-404.component.scss'
+})
+export class Error404Component {
+    //
+}

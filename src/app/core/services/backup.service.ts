@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { RequestService } from './request.service';
-import { UserStatusModel } from '../models/status.models';
 import { catchError, tap, throwError } from 'rxjs';
 import { ApiSuccessModel } from '../models/api.models';
 
