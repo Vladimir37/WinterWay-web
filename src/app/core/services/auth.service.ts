@@ -36,6 +36,17 @@ export class AuthService {
         );
     }
 
+    logout() {
+        return this.request.post<ApiSuccessModel>('auth/logout', {}).pipe(
+            tap(() => {
+                this._userStatus = null;
+            }),
+            catchError(err => {
+                return throwError(() => err);
+            })
+        );
+    }
+
     getUserStatus() {
         return this.request.get<UserStatusModel>('auth/user-status').pipe(
             tap(data => {

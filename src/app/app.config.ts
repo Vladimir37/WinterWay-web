@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 import { routes } from './routes/app.routes';
 
@@ -12,6 +13,7 @@ export const appConfig: ApplicationConfig = {
         provideRouter(routes),
         provideHttpClient(),
         provideAnimations(),
-        provideToastr()
+        provideToastr(),
+        BsModalService
     ]
 };

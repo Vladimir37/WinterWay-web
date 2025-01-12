@@ -12,11 +12,19 @@ import { NgOptimizedImage } from '@angular/common';
 })
 export class WWPreloaderComponent {
     @Input() isWhite: boolean = false;
+    @Input() small: boolean = false;
 
-    imageUrl(): string {
+    get imageUrl(): string {
         if (this.isWhite) {
             return '/images/icons/preloaders/preload-moon-white.gif';
         }
         return '/images/icons/preloaders/preload-moon-black.gif';
+    }
+
+    get imageSize(): number {
+        if (this.small) {
+            return 32;
+        }
+        return 64;
     }
 }

@@ -1,4 +1,4 @@
-export enum ButtonType {
+export enum ElementType {
     Primary = 'primary',
     Secondary = 'secondary',
     Success = 'success',
@@ -9,7 +9,7 @@ export enum ButtonType {
     Dark = 'dark'
 }
 
-export enum ButtonSize {
+export enum ElementSize {
     Small = 'sm',
     Medium = 'md',
     Large = 'lg',

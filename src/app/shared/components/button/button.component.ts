@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
-import { ButtonSize, ButtonType } from './button.enums';
+import { ElementSize, ElementType } from '../../enums/element-types.enums';
 
 @Component({
     standalone: true,
@@ -15,24 +15,32 @@ import { ButtonSize, ButtonType } from './button.enums';
 })
 export class WWButtonComponent {
     @Input() label: string = '';
-    @Input() type: ButtonType = ButtonType.Primary;
-    @Input() size: ButtonSize = ButtonSize.Medium;
+    @Input() type: ElementType = ElementType.Primary;
+    @Input() size: ElementSize = ElementSize.Medium;
     @Input() outline: boolean = false;
+    @Input() submit: boolean = false;
     @Input() disabled: boolean = false;
 
     @Output() clicked = new EventEmitter<string>();
 
-    onClick(): void {
-        this.clicked.emit();
+    get buttonType(): string {
+        if (this.submit) {
+            return 'submit';
+        }
+        return 'button';
     }
 
-    getClasses(): string[] {
+    get classes(): string[] {
         const classes = ['btn'];
         const outlineClass = this.outline ? 'outline-' : '';
         classes.push(`btn-${outlineClass}${this.type}`);
-        if (this.size !== ButtonSize.Medium) {
+        if (this.size !== ElementSize.Medium) {
             classes.push(`btn-${this.size}`);
         }
         return classes;
+    }
+
+    onClick(): void {
+        this.clicked.emit();
     }
 }

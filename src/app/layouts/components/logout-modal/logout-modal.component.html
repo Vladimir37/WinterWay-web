@@ -1,0 +1,40 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">Log out</h4>
+    <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="close-btn"
+        [disabled]="isLoading"
+        (click)="bsModalRef.hide()"
+    >
+        <span
+            aria-hidden="true"
+            class="visually-hidden"
+        >
+            &times;
+        </span>
+    </button>
+</div>
+<div class="modal-body">
+    Are you sure you want to log out?
+</div>
+<div class="modal-footer">
+    <ww-preloader
+        *ngIf="isLoading"
+        [small]="true"
+    ></ww-preloader>
+    <ww-button
+        label="Cancel"
+        [size]="ElementSize.Medium"
+        [type]="ElementType.Primary"
+        [disabled]="isLoading"
+        (clicked)="bsModalRef.hide()"
+    />
+    <ww-button
+        label="Log out"
+        [size]="ElementSize.Medium"
+        [type]="ElementType.Danger"
+        [disabled]="isLoading"
+        (clicked)="logout()"
+    />
+</div>

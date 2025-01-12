@@ -1,0 +1,27 @@
+.main-layout-navlinks-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.main-layout-notifications-container {
+    position: relative;
+    cursor: pointer;
+}
+.main-layout-notifications-count {
+    position: absolute;
+    bottom: 2px;
+    left: -7px;
+    padding: 0 1px;
+    min-width: 18px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    font-size: 12px;
+    color: white;
+    background-color: var(--dangerColor);
+    border-radius: 100%;
+}
+.main-layout-username {
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}

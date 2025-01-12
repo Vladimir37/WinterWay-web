@@ -32,13 +32,13 @@
             class="auth-page-form"
         >
             <h1>Winter Way</h1>
-            <form [formGroup]="loginForm">
+            <form [formGroup]="loginForm" (ngSubmit)="loginClick()">
                 <div class="auth-page-form-input">
                     <ww-input
                         id="login-input"
                         label="Username"
                         formControlName="Username"
-                        [validState]="checkFieldValidity(loginForm, 'Username')"
+                        [validState]="validationService.checkFieldValidity(loginForm, 'Username')"
                     />
                 </div>
                 <div class="auth-page-form-input">
@@ -47,45 +47,45 @@
                         type="password"
                         label="Password"
                         formControlName="Password"
-                        [validState]="checkFieldValidity(loginForm, 'Password')"
+                        [validState]="validationService.checkFieldValidity(loginForm, 'Password')"
+                    />
+                </div>
+                <div class="auth-page-form-info">
+                    <div class="auth-page-form-info-preloader">
+                        <ww-preloader
+                            [@authPreloaderAnimation]="preloaderState"
+                        />
+                    </div>
+                    <ww-alert
+                        [alertType]="requestAlertType"
+                        [subtitle]="requestAlertMessage"
+                        [@authErrorAnimation]="requestAlertState"
+                    />
+                </div>
+                <div class="auth-page-button-main">
+                    <ww-button
+                        label="Login"
+                        [size]="ElementSize.Large"
+                        [type]="ElementType.Primary"
+                        [submit]="true"
+                        [disabled]="isLoading"
                     />
                 </div>
             </form>
-            <div class="auth-page-form-info">
-                <div class="auth-page-form-info-preloader">
-                    <ww-preloader
-                        [@authPreloaderAnimation]="preloaderState"
-                    />
-                </div>
-                <ww-alert
-                    [alertType]="requestAlertType"
-                    [subtitle]="requestAlertMessage"
-                    [@authErrorAnimation]="requestAlertState"
-                />
-            </div>
-            <div class="auth-page-button-main">
-                <ww-button
-                    label="Login"
-                    [size]="ButtonSize.Large"
-                    [type]="ButtonType.Primary"
-                    [disabled]="isLoading"
-                    (clicked)="loginClick()"
-                />
-            </div>
             <div class="auth-page-button-additional">
                 <ww-button
                     *ngIf="appStatus?.registrationIsAvailable"
                     label="Register"
-                    [size]="ButtonSize.Small"
-                    [type]="ButtonType.Primary"
+                    [size]="ElementSize.Small"
+                    [type]="ElementType.Primary"
                     [disabled]="isLoading"
                     (clicked)="loadBlock(registerFormBlock)"
                 />
                 <ww-button
                     *ngIf="appStatus?.importIsAvailable"
                     label="Import data"
-                    [size]="ButtonSize.Small"
-                    [type]="ButtonType.Primary"
+                    [size]="ElementSize.Small"
+                    [type]="ElementType.Primary"
                     [disabled]="isLoading"
                     (clicked)="loadBlock(importFormBlock)"
                 />
@@ -97,13 +97,13 @@
             class="auth-page-form"
         >
             <h1>Registration</h1>
-            <form [formGroup]="registrationForm">
+            <form [formGroup]="registrationForm" (ngSubmit)="registrationClick()">
                 <div class="auth-page-form-input">
                     <ww-input
                         id="login-reg"
                         label="Username"
                         formControlName="Username"
-                        [validState]="checkFieldValidity(registrationForm, 'Username')"
+                        [validState]="validationService.checkFieldValidity(registrationForm, 'Username')"
                     />
                 </div>
                 <div class="auth-page-form-input">
@@ -112,7 +112,7 @@
                         type="password"
                         label="Password"
                         formControlName="Password"
-                        [validState]="checkFieldValidity(registrationForm, 'Password')"
+                        [validState]="validationService.checkFieldValidity(registrationForm, 'Password')"
                     />
                 </div>
                 <div class="auth-page-form-input">
@@ -121,37 +121,37 @@
                         type="password"
                         label="Repeat password"
                         formControlName="RepeatPassword"
-                        [validState]="checkFieldValidity(registrationForm, 'RepeatPassword', passwordMismatch)"
+                        [validState]="validationService.checkFieldValidity(registrationForm, 'RepeatPassword', passwordMismatch)"
+                    />
+                </div>
+                <div class="auth-page-form-info">
+                    <div class="auth-page-form-info-preloader">
+                        <ww-preloader
+                            [@authPreloaderAnimation]="preloaderState"
+                        />
+                    </div>
+                    <ww-alert
+                        [alertType]="requestAlertType"
+                        [subtitle]="requestAlertMessage"
+                        [lineHeight]="2"
+                        [@authErrorAnimation]="requestAlertState"
+                    />
+                </div>
+                <div class="auth-page-button-main">
+                    <ww-button
+                        label="Create account"
+                        [size]="ElementSize.Large"
+                        [type]="ElementType.Primary"
+                        [submit]="true"
+                        [disabled]="isLoading"
                     />
                 </div>
             </form>
-            <div class="auth-page-form-info">
-                <div class="auth-page-form-info-preloader">
-                    <ww-preloader
-                        [@authPreloaderAnimation]="preloaderState"
-                    />
-                </div>
-                <ww-alert
-                    [alertType]="requestAlertType"
-                    [subtitle]="requestAlertMessage"
-                    [lineHeight]="2"
-                    [@authErrorAnimation]="requestAlertState"
-                />
-            </div>
-            <div class="auth-page-button-main">
-                <ww-button
-                    label="Create account"
-                    [size]="ButtonSize.Large"
-                    [type]="ButtonType.Primary"
-                    [disabled]="isLoading"
-                    (clicked)="registrationClick()"
-                />
-            </div>
             <div class="auth-page-button-back">
                 <ww-button
                     label="Go back"
-                    [size]="ButtonSize.Small"
-                    [type]="ButtonType.Primary"
+                    [size]="ElementSize.Small"
+                    [type]="ElementType.Primary"
                     [disabled]="isLoading"
                     (clicked)="loadBlock(loginFormBlock)"
                 />
@@ -163,43 +163,43 @@
             class="auth-page-form"
         >
             <h1>Import data</h1>
-            <form [formGroup]="importForm">
+            <form [formGroup]="importForm" (ngSubmit)="importClick()">
                 <div class="auth-page-form-input">
                     <ww-textarea
                         label="Data JSON"
                         id="import-textarea"
                         [size]="6"
                         formControlName="ImportData"
-                        [validState]="checkFieldValidity(importForm, 'ImportData')"
+                        [validState]="validationService.checkFieldValidity(importForm, 'ImportData')"
+                    />
+                </div>
+                <div class="auth-page-form-info">
+                    <div class="auth-page-form-info-preloader">
+                        <ww-preloader
+                            [@authPreloaderAnimation]="preloaderState"
+                        />
+                    </div>
+                    <ww-alert
+                        [alertType]="requestAlertType"
+                        [subtitle]="requestAlertMessage"
+                        [@authErrorAnimation]="requestAlertState"
+                    />
+                </div>
+                <div class="auth-page-button-main">
+                    <ww-button
+                        label="Import"
+                        [size]="ElementSize.Large"
+                        [type]="ElementType.Primary"
+                        [submit]="true"
+                        [disabled]="isLoading"
                     />
                 </div>
             </form>
-            <div class="auth-page-form-info">
-                <div class="auth-page-form-info-preloader">
-                    <ww-preloader
-                        [@authPreloaderAnimation]="preloaderState"
-                    />
-                </div>
-                <ww-alert
-                    [alertType]="requestAlertType"
-                    [subtitle]="requestAlertMessage"
-                    [@authErrorAnimation]="requestAlertState"
-                />
-            </div>
-            <div class="auth-page-button-main">
-                <ww-button
-                    label="Import"
-                    [size]="ButtonSize.Large"
-                    [type]="ButtonType.Primary"
-                    [disabled]="isLoading"
-                    (clicked)="importClick()"
-                />
-            </div>
             <div class="auth-page-button-back">
                 <ww-button
                     label="Go back"
-                    [size]="ButtonSize.Small"
-                    [type]="ButtonType.Primary"
+                    [size]="ElementSize.Small"
+                    [type]="ElementType.Primary"
                     [disabled]="isLoading"
                     (clicked)="loadBlock(loginFormBlock)"
                 />

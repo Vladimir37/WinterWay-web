@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertType } from '../../../../shared/components/alert/alert.enums';
 import { AnimationTwoStep } from '../../../../core/enums/animation-steps.enum';
-import { ButtonSize, ButtonType } from '../../../../shared/components/button/button.enums';
+import { ElementSize, ElementType } from '../../../../shared/enums/element-types.enums';
 import { WWAlertComponent } from '../../../../shared/components/alert/alert.component';
 import { WWButtonComponent } from '../../../../shared/components/button/button.component';
 import { WWInputComponent } from '../../../../shared/components/input/input.component';
@@ -19,6 +19,7 @@ import { passwordMatchValidator } from '../../../../core/validators/password-mat
 import { jsonValidator } from '../../../../core/validators/json.validator';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BackupService } from '../../../../core/services/backup.service';
+import { ValidationService } from '../../../../core/services/validation.service';
 
 @Component({
     selector: 'app-root',
@@ -119,8 +120,8 @@ export class AuthComponent {
     preloaderState: AnimationTwoStep = AnimationTwoStep.First;
 
     protected readonly AlertType = AlertType;
-    protected readonly ButtonSize = ButtonSize;
-    protected readonly ButtonType = ButtonType;
+    protected readonly ElementSize = ElementSize;
+    protected readonly ElementType = ElementType;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -128,7 +129,8 @@ export class AuthComponent {
         private route: ActivatedRoute,
         private appDataService: AppDataService,
         private authService: AuthService,
-        private backupService: BackupService
+        private backupService: BackupService,
+        public validationService: ValidationService
     ) {
         this.loginForm = this.formBuilder.group({
             Username: [
@@ -214,14 +216,6 @@ export class AuthComponent {
             this.loadedBlockRef = targetBlock;
             this.formState = AnimationTwoStep.Second;
         }, 400);
-    }
-
-    checkFieldValidity(form: FormGroup, fieldName: string, additionalFactor: boolean = false): InputValidState {
-        const targetField = form.controls[fieldName];
-        if (targetField.touched && (targetField.invalid || additionalFactor)) {
-            return InputValidState.Invalid;
-        }
-        return InputValidState.None;
     }
 
     startLoading() {

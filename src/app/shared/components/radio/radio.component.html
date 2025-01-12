@@ -1,0 +1,26 @@
+<div class="ww-radio-label col-form-label">
+    {{ label }}
+</div>
+<div
+    class="btn-group"
+    role="group"
+>
+    <ng-container *ngFor="let option of options; let i = index">
+        <input
+            [id]="String(id) + String(option.value)"
+            type="radio"
+            class="btn-check"
+            [name]="id"
+            [value]="option.value"
+            [checked]="value == option.value"
+            [disabled]="disabled"
+            (change)="selectOption(option.value)"
+        >
+        <label
+            [class]="classes"
+            [for]="String(id) + String(option.value)"
+        >
+            {{ option.title }}
+        </label>
+    </ng-container>
+</div>
