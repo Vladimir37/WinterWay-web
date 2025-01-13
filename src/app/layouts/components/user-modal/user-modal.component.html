@@ -4,7 +4,7 @@
         type="button"
         class="btn-close close pull-right"
         aria-label="close-btn"
-        [disabled]="isLoading"
+        [disabled]="isLoadingEditUser || isLoadingChangePassword"
         (click)="bsModalRef.hide()"
     >
         <span
@@ -22,6 +22,7 @@
             label="Username"
             formControlName="Username"
             [validState]="validationService.checkFieldValidity(editUserForm, 'Username')"
+            validatorMessage="Please enter between 6 and 40 characters"
         />
         <ww-radio
             id="defaultAutocomplete"
@@ -41,12 +42,17 @@
             [size]="ElementSize.Medium"
             [outline]="true"
         ></ww-radio>
-        <div>
+        <div class="user-modal-edit-buttons">
+            <ww-preloader
+                *ngIf="isLoadingEditUser"
+                class="user-modal-preloader"
+                [small]="true"
+            ></ww-preloader>
             <ww-button
-                label="Edit User"
+                label="Edit user data"
                 [size]="ElementSize.Medium"
                 [type]="ElementType.Primary"
-                [disabled]="isLoading"
+                [disabled]="isLoadingEditUser || isLoadingChangePassword"
                 (clicked)="editUser()"
             />
         </div>
@@ -55,40 +61,47 @@
         <ww-input
             id="pass-old-edit"
             label="Old password"
+            type="password"
             formControlName="OldPassword"
             [validState]="validationService.checkFieldValidity(changePasswordForm, 'OldPassword')"
+            validatorMessage="Please enter between 6 and 40 characters"
         />
         <ww-input
             id="pass-edit"
             label="Password"
+            type="password"
             formControlName="NewPassword"
             [validState]="validationService.checkFieldValidity(changePasswordForm, 'NewPassword')"
+            validatorMessage="Please enter between 6 and 40 characters"
         />
         <ww-input
             id="pass-again-edit"
             label="Repeat new password"
+            type="password"
             formControlName="RepeatPassword"
-            [validState]="validationService.checkFieldValidity(changePasswordForm, 'RepeatPassword')"
+            [validState]="validationService.checkPasswordMatch(changePasswordForm, 'RepeatPassword')"
+            validatorMessage="Both passwords must be the same"
         />
     </form>
 </div>
 <div class="modal-footer">
     <ww-preloader
-        *ngIf="isLoading"
+        *ngIf="isLoadingChangePassword"
+        class="user-modal-preloader"
         [small]="true"
     ></ww-preloader>
     <ww-button
         label="Close"
         [size]="ElementSize.Medium"
         [type]="ElementType.Light"
-        [disabled]="isLoading"
+        [disabled]="isLoadingEditUser || isLoadingChangePassword"
         (clicked)="bsModalRef.hide()"
     />
-<!--    <ww-button-->
-<!--        label="Log out"-->
-<!--        [size]="ButtonSize.Medium"-->
-<!--        [type]="ButtonType.Danger"-->
-<!--        [disabled]="isLoading"-->
-<!--        (clicked)="logout()"-->
-<!--    />-->
+    <ww-button
+        label="Change password"
+        [size]="ElementSize.Medium"
+        [type]="ElementType.Primary"
+        [disabled]="isLoadingEditUser || isLoadingChangePassword"
+        (clicked)="changePassword()"
+    />
 </div>

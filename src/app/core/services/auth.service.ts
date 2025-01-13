@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserStatusModel } from '../models/status.models';
 import { RequestService } from './request.service';
-import { LoginDTO, RegistrationDTO } from '../models/auth.models';
+import { EditUserDTO, LoginDTO, RegistrationDTO } from '../models/auth.models';
 import { catchError, tap, throwError } from 'rxjs';
 import { ApiSuccessModel } from '../models/api.models';
 
@@ -41,6 +41,14 @@ export class AuthService {
             tap(() => {
                 this._userStatus = null;
             }),
+            catchError(err => {
+                return throwError(() => err);
+            })
+        );
+    }
+
+    editUser(editUserData: EditUserDTO) {
+        return this.request.post<ApiSuccessModel>('auth/edit-user', editUserData).pipe(
             catchError(err => {
                 return throwError(() => err);
             })

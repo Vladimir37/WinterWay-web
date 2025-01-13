@@ -12,7 +12,6 @@ import { WWButtonComponent } from '../../../../shared/components/button/button.c
 import { WWInputComponent } from '../../../../shared/components/input/input.component';
 import { WWTextareaComponent } from '../../../../shared/components/textarea/textarea.component';
 import { WWPreloaderComponent } from '../../../../shared/components/preloader/preloader.component';
-import { InputValidState } from '../../../../shared/components/input/input.enums';
 import { AppDataService } from '../../../../core/services/app-data.service';
 import { AppStatusModel } from '../../../../core/models/status.models';
 import { passwordMatchValidator } from '../../../../core/validators/password-match.validator';
@@ -20,6 +19,7 @@ import { jsonValidator } from '../../../../core/validators/json.validator';
 import { AuthService } from '../../../../core/services/auth.service';
 import { BackupService } from '../../../../core/services/backup.service';
 import { ValidationService } from '../../../../core/services/validation.service';
+import { PreloadService } from '../../../../core/services/preload.service';
 
 @Component({
     selector: 'app-root',
@@ -128,6 +128,7 @@ export class AuthComponent {
         private router: Router,
         private route: ActivatedRoute,
         private appDataService: AppDataService,
+        private preloadService: PreloadService,
         private authService: AuthService,
         private backupService: BackupService,
         public validationService: ValidationService
@@ -157,7 +158,7 @@ export class AuthComponent {
                     [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
                 ]
             },
-            { validators: passwordMatchValidator() }
+            { validators: passwordMatchValidator('Password', 'RepeatPassword') }
         );
         this.importForm = this.formBuilder.group({
             ImportData: [
@@ -177,6 +178,7 @@ export class AuthComponent {
 
     ngAfterViewInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.preloadService.preloadImages();
 
         forkJoin({
             AppStatus: this.appDataService.getAppStatus(),

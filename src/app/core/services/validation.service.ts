@@ -13,4 +13,12 @@ export class ValidationService {
         }
         return InputValidState.None;
     }
+
+    checkPasswordMatch(form: FormGroup, fieldName: string): InputValidState {
+        const targetField = form.controls[fieldName];
+        if (form.errors?.['passwordMismatch'] && targetField.touched) {
+            return InputValidState.Invalid;
+        }
+        return InputValidState.None;
+    }
 }

@@ -4,7 +4,6 @@ import {
     FormBuilder,
     FormGroup,
     FormsModule,
-    NG_VALUE_ACCESSOR,
     ReactiveFormsModule,
     Validators
 } from '@angular/forms';
@@ -19,6 +18,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { ValidationService } from '../../../core/services/validation.service';
 import { RadioElement } from '../../../shared/components/radio/radio.model';
+import { passwordMatchValidator } from '../../../core/validators/password-match.validator';
 
 @Component({
     standalone: true,
@@ -36,7 +36,8 @@ import { RadioElement } from '../../../shared/components/radio/radio.model';
     styleUrl: './user-modal.component.scss'
 })
 export class UserModalComponent {
-    isLoading: boolean = false;
+    isLoadingEditUser: boolean = false;
+    isLoadingChangePassword: boolean = false;
     defaultAutocompleteOptions: RadioElement[] = [
         {
             value: false,
@@ -86,20 +87,23 @@ export class UserModalComponent {
                 [Validators.required],
             ],
         });
-        this.changePasswordForm = this.formBuilder.group({
-            OldPassword: [
-                '',
-                [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
-            ],
-            NewPassword: [
-                '',
-                [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
-            ],
-            RepeatPassword: [
-                '',
-                [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
-            ]
-        });
+        this.changePasswordForm = this.formBuilder.group(
+            {
+                OldPassword: [
+                    '',
+                    [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+                ],
+                NewPassword: [
+                    '',
+                    [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+                ],
+                RepeatPassword: [
+                    '',
+                    [Validators.required, Validators.minLength(6), Validators.maxLength(40)],
+                ]
+            },
+            { validators: passwordMatchValidator('NewPassword', 'RepeatPassword') }
+        );
     }
 
     get user(): UserStatusModel {
@@ -107,6 +111,20 @@ export class UserModalComponent {
     }
 
     editUser() {
-        console.log(this.editUserForm.value);
+        if (this.editUserForm.invalid) {
+            this.toastService.createErrorToast('Incorrect data.', 'Make sure to complete the form properly');
+            return;
+        }
+
+        this.isLoadingEditUser = true;
+    }
+
+    changePassword() {
+        if (this.editUserForm.invalid) {
+            this.toastService.createErrorToast('Incorrect data.', 'Make sure to complete the form properly');
+            return;
+        }
+
+        this.isLoadingChangePassword = true;
     }
 }
