@@ -1,12 +1,6 @@
-import { Component, forwardRef } from '@angular/core';
-import { NgIf } from '@angular/common';
-import {
-    FormBuilder,
-    FormGroup,
-    FormsModule,
-    ReactiveFormsModule,
-    Validators
-} from '@angular/forms';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { UserStatusModel } from '../../../core/models/status.models';
 import { WWButtonComponent } from '../../../shared/components/button/button.component';
@@ -19,6 +13,8 @@ import { ToastService } from '../../../core/services/toast.service';
 import { ValidationService } from '../../../core/services/validation.service';
 import { RadioElement } from '../../../shared/components/radio/radio.model';
 import { passwordMatchValidator } from '../../../core/validators/password-match.validator';
+import { finalize } from 'rxjs';
+import { InputValidState } from '../../../shared/components/input/input.enums';
 
 @Component({
     standalone: true,
@@ -31,13 +27,29 @@ import { passwordMatchValidator } from '../../../core/validators/password-match.
         WWButtonComponent,
         WWPreloaderComponent,
         WWInputComponent,
-        WWRadioComponent
+        WWRadioComponent,
+        NgTemplateOutlet
     ],
     styleUrl: './user-modal.component.scss'
 })
 export class UserModalComponent {
-    isLoadingEditUser: boolean = false;
-    isLoadingChangePassword: boolean = false;
+    isLoading: boolean = false;
+
+    activeTab: number = 0;
+
+    @ViewChild('editUser') editUserBlock!: TemplateRef<any>;
+    @ViewChild('changePassword') changePasswordBlock!: TemplateRef<any>;
+
+    availableTabs: RadioElement[] = [
+        {
+            value: 0,
+            title: 'Edit user settings'
+        },
+        {
+            value: 1,
+            title: 'Change password'
+        },
+    ]
     defaultAutocompleteOptions: RadioElement[] = [
         {
             value: false,
@@ -83,7 +95,7 @@ export class UserModalComponent {
                 [Validators.required],
             ],
             Theme: [
-                0,
+                this.authService.userStatus?.themeType,
                 [Validators.required],
             ],
         });
@@ -110,21 +122,87 @@ export class UserModalComponent {
         return this.authService.userStatus!;
     }
 
-    editUser() {
-        if (this.editUserForm.invalid) {
-            this.toastService.createErrorToast('Incorrect data.', 'Make sure to complete the form properly');
-            return;
+    get formBlockRef(): TemplateRef<any> {
+        if (this.activeTab === 0) {
+            return this.editUserBlock;
         }
-
-        this.isLoadingEditUser = true;
+        return this.changePasswordBlock;
     }
 
-    changePassword() {
+    get repeatPasswordValidState(): InputValidState {
+        const isTheSame = this.validationService.checkPasswordMatch(this.changePasswordForm, 'RepeatPassword');
+        return this.validationService.checkFieldValidity(this.changePasswordForm, 'RepeatPassword', isTheSame === InputValidState.Invalid);
+    }
+
+    get repeatPasswordValidationMessage(): string {
+        if (this.validationService.checkPasswordMatch(this.changePasswordForm, 'RepeatPassword') === InputValidState.Invalid) {
+            return 'Both passwords must be the same';
+        }
+        return 'Please enter between 6 and 40 characters';
+    }
+
+    submitClick() {
+        if (this.activeTab === 0) {
+            return this.editUserClick();
+        }
+        return this.changePasswordClick();
+    }
+
+    toggleLoadingStatus(status: boolean) {
+        this.isLoading = status;
+        if (!status) {
+            this.editUserForm.enable();
+            this.changePasswordForm.enable();
+        } else {
+            this.editUserForm.disable();
+            this.changePasswordForm.disable();
+        }
+    }
+
+    editUserClick() {
         if (this.editUserForm.invalid) {
-            this.toastService.createErrorToast('Incorrect data.', 'Make sure to complete the form properly');
+            this.toastService.createWarningToast('Incorrect data.', 'Make sure to complete the form properly');
             return;
         }
 
-        this.isLoadingChangePassword = true;
+        this.toggleLoadingStatus(true);
+
+        this.authService.editUser(this.editUserForm.value).pipe(
+            finalize(() => {
+                this.toggleLoadingStatus(false);
+            })
+        ).subscribe({
+            next: () => {
+                this.bsModalRef.hide();
+                this.authService.getUserStatus().subscribe();
+                this.toastService.createSuccessToast('Success', 'User data has been successfully updated');
+            },
+            error: () => {
+                this.toastService.createErrorToast('Error', 'Please, try again later');
+            }
+        });
+    }
+
+    changePasswordClick() {
+        if (this.changePasswordForm.invalid) {
+            this.toastService.createWarningToast('Incorrect data.', 'Make sure to complete the form properly');
+            return;
+        }
+
+        this.toggleLoadingStatus(true);
+
+        this.authService.changePassword(this.changePasswordForm.value).pipe(
+            finalize(() => {
+                this.toggleLoadingStatus(false);
+            })
+        ).subscribe({
+            next: () => {
+                this.bsModalRef.hide();
+                this.toastService.createSuccessToast('Success', 'Password has been successfully changed');
+            },
+            error: (err) => {
+                this.toastService.createErrorToast('Error', err?.error?.errorMessage ?? 'Please, try again later');
+            }
+        });
     }
 }

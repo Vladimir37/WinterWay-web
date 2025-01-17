@@ -4,7 +4,7 @@
         type="button"
         class="btn-close close pull-right"
         aria-label="close-btn"
-        [disabled]="isLoadingEditUser || isLoadingChangePassword"
+        [disabled]="isLoading"
         (click)="bsModalRef.hide()"
     >
         <span
@@ -16,92 +16,101 @@
     </button>
 </div>
 <div class="modal-body">
-    <form [formGroup]="editUserForm">
-        <ww-input
-            id="username-edit"
-            label="Username"
-            formControlName="Username"
-            [validState]="validationService.checkFieldValidity(editUserForm, 'Username')"
-            validatorMessage="Please enter between 6 and 40 characters"
+    <div class="user-modal-tabs">
+        <ww-radio
+            class="user-modal-input"
+            id="selectTab"
+            [options]="availableTabs"
+            [type]="ElementType.Primary"
+            [size]="ElementSize.Medium"
+            [(ngModel)]="activeTab"
+            [disabled]="isLoading"
+            [outline]="true"
         />
-        <ww-radio
-            id="defaultAutocomplete"
-            label="Automatically close tasks when the limit of subtasks or counters is reached"
-            formControlName="AutoCompleteTasks"
-            [options]="defaultAutocompleteOptions"
-            [type]="ElementType.Primary"
-            [size]="ElementSize.Medium"
-            [outline]="true"
-        ></ww-radio>
-        <ww-radio
-            id="theme"
-            label="Interface color theme"
-            formControlName="Theme"
-            [options]="themeOptions"
-            [type]="ElementType.Primary"
-            [size]="ElementSize.Medium"
-            [outline]="true"
-        ></ww-radio>
-        <div class="user-modal-edit-buttons">
-            <ww-preloader
-                *ngIf="isLoadingEditUser"
-                class="user-modal-preloader"
-                [small]="true"
-            ></ww-preloader>
-            <ww-button
-                label="Edit user data"
-                [size]="ElementSize.Medium"
-                [type]="ElementType.Primary"
-                [disabled]="isLoadingEditUser || isLoadingChangePassword"
-                (clicked)="editUser()"
+    </div>
+    <ng-container *ngTemplateOutlet="formBlockRef"></ng-container>
+    <ng-template #editUser>
+        <form [formGroup]="editUserForm">
+            <ww-input
+                class="user-modal-input"
+                id="username-edit"
+                label="Username"
+                formControlName="Username"
+                [validState]="validationService.checkFieldValidity(editUserForm, 'Username')"
+                validatorMessage="Please enter between 6 and 40 characters"
             />
-        </div>
-    </form>
-    <form [formGroup]="changePasswordForm">
-        <ww-input
-            id="pass-old-edit"
-            label="Old password"
-            type="password"
-            formControlName="OldPassword"
-            [validState]="validationService.checkFieldValidity(changePasswordForm, 'OldPassword')"
-            validatorMessage="Please enter between 6 and 40 characters"
-        />
-        <ww-input
-            id="pass-edit"
-            label="Password"
-            type="password"
-            formControlName="NewPassword"
-            [validState]="validationService.checkFieldValidity(changePasswordForm, 'NewPassword')"
-            validatorMessage="Please enter between 6 and 40 characters"
-        />
-        <ww-input
-            id="pass-again-edit"
-            label="Repeat new password"
-            type="password"
-            formControlName="RepeatPassword"
-            [validState]="validationService.checkPasswordMatch(changePasswordForm, 'RepeatPassword')"
-            validatorMessage="Both passwords must be the same"
-        />
-    </form>
+            <ww-radio
+                class="user-modal-input"
+                id="defaultAutocomplete"
+                label="Automatically close tasks when the limit of subtasks or counters is reached"
+                formControlName="AutoCompleteTasks"
+                [options]="defaultAutocompleteOptions"
+                [type]="ElementType.Primary"
+                [size]="ElementSize.Medium"
+                [outline]="true"
+            ></ww-radio>
+            <ww-radio
+                class="user-modal-input"
+                id="theme"
+                label="Interface color theme"
+                formControlName="Theme"
+                [options]="themeOptions"
+                [type]="ElementType.Primary"
+                [size]="ElementSize.Medium"
+                [outline]="true"
+            ></ww-radio>
+        </form>
+    </ng-template>
+    <ng-template #changePassword>
+        <form [formGroup]="changePasswordForm">
+            <ww-input
+                class="user-modal-input"
+                id="pass-old-edit"
+                label="Old password"
+                type="password"
+                formControlName="OldPassword"
+                [validState]="validationService.checkFieldValidity(changePasswordForm, 'OldPassword')"
+                validatorMessage="Please enter between 6 and 40 characters"
+            />
+            <ww-input
+                class="user-modal-input"
+                id="pass-edit"
+                label="Password"
+                type="password"
+                formControlName="NewPassword"
+                [validState]="validationService.checkFieldValidity(changePasswordForm, 'NewPassword')"
+                validatorMessage="Please enter between 6 and 40 characters"
+            />
+            <ww-input
+                class="user-modal-input"
+                id="pass-again-edit"
+                label="Repeat new password"
+                type="password"
+                formControlName="RepeatPassword"
+                [validState]="repeatPasswordValidState"
+                [validatorMessage]="repeatPasswordValidationMessage"
+            />
+        </form>
+    </ng-template>
 </div>
 <div class="modal-footer">
     <ww-preloader
-        *ngIf="isLoadingChangePassword"
+        *ngIf="isLoading"
         class="user-modal-preloader"
         [small]="true"
     ></ww-preloader>
     <ww-button
         label="Close"
         [size]="ElementSize.Medium"
-        [type]="ElementType.Light"
-        [disabled]="isLoadingEditUser || isLoadingChangePassword"
+        [type]="ElementType.Primary"
+        [disabled]="isLoading"
         (clicked)="bsModalRef.hide()"
     />
     <ww-button
-        label="Change password"
+        [label]="activeTab === 0 ? 'Edit user data' : 'Change password'"
         [size]="ElementSize.Medium"
         [type]="ElementType.Primary"
-        [disabled]="isLoadingEditUser || isLoadingChangePassword"
-        (clicked)="changePassword()"
+        [disabled]="isLoading"
+        (clicked)="submitClick()"
     />
 </div>

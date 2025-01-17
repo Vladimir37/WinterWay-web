@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserStatusModel } from '../models/status.models';
 import { RequestService } from './request.service';
-import { EditUserDTO, LoginDTO, RegistrationDTO } from '../models/auth.models';
+import { ChangePasswordDTO, EditUserDTO, LoginDTO, RegistrationDTO } from '../models/auth.models';
 import { catchError, tap, throwError } from 'rxjs';
 import { ApiSuccessModel } from '../models/api.models';
 
@@ -55,10 +55,19 @@ export class AuthService {
         );
     }
 
+    changePassword(changePasswordDTO: ChangePasswordDTO) {
+        return this.request.post<ApiSuccessModel>('auth/change-password', changePasswordDTO).pipe(
+            catchError(err => {
+                return throwError(() => err);
+            })
+        );
+    }
+
     getUserStatus() {
         return this.request.get<UserStatusModel>('auth/user-status').pipe(
             tap(data => {
                 this._userStatus = data;
+                document.body.setAttribute("data-bs-theme", data.themeType === 0 ? 'light' : 'dark');
             }),
             catchError(err => {
                 return throwError(() => err);

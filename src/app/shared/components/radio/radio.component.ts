@@ -1,10 +1,9 @@
-import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
+import { Component, forwardRef, Input, Output } from '@angular/core';
 import { NgForOf } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { ElementSize, ElementType } from '../../enums/element-types.enums';
 import { RadioElement } from './radio.model';
-import { WWInputComponent } from '../input/input.component';
 
 @Component({
     standalone: true,
