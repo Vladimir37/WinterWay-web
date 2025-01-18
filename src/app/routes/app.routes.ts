@@ -4,7 +4,7 @@ import { AuthGuard } from '../core/guards/auth.guard';
 import { NonAuthGuard} from '../core/guards/non-auth.guard';
 import { AuthComponent } from '../features/auth/pages/auth/auth.component';
 import { MainLayoutComponent } from '../layouts/main-layout/main-layout.component';
-import { Error404Component } from '../features/auth/pages/error-404/error-404.component';
+import { Error404Component } from '../features/errors/pages/error-404/error-404.component';
 
 export const routes: Routes = [
     {

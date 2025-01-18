@@ -1,0 +1,31 @@
+<div
+    class="notifications"
+    [@notificationBlockAnimation]="notificationBlockState"
+>
+    <div class="card border-primary">
+        <div class="card-header">Notifications</div>
+        <div class="card-body">
+            <div class="notification-tabs-container">
+                <ww-radio
+                    id="notification-tabs"
+                    [options]="listOptions"
+                    [type]="ElementType.Primary"
+                    [size]="ElementSize.Small"
+                    [(ngModel)]="activeListTab"
+                    [disabled]="false"
+                    [outline]="true"
+                />
+            </div>
+            <ng-container *ngTemplateOutlet="activeBlock"></ng-container>
+            <ng-template #unreadMessages>
+                //
+            </ng-template>
+            <ng-template #readMessages>
+                //
+            </ng-template>
+            <ng-template #allMessages>
+                //
+            </ng-template>
+        </div>
+    </div>
+</div>

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { UserStatusModel } from '../models/status.models';
-import { RequestService } from './request.service';
+import { RequestService } from './requests/_request.service';
 import { ChangePasswordDTO, EditUserDTO, LoginDTO, RegistrationDTO } from '../models/auth.models';
 import { catchError, tap, throwError } from 'rxjs';
 import { ApiSuccessModel } from '../models/api.models';
+import { ThemeService } from './theme.service';
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +12,10 @@ import { ApiSuccessModel } from '../models/api.models';
 export class AuthService {
     private _userStatus: UserStatusModel | null = null;
 
-    constructor(private request: RequestService) {}
+    constructor(
+        private request: RequestService,
+        private themeService: ThemeService
+    ) {}
 
     get userStatus(): UserStatusModel | null {
         return this._userStatus;
@@ -21,6 +25,7 @@ export class AuthService {
         return this.request.post<UserStatusModel>('auth/login', loginData).pipe(
             tap(data => {
                 this._userStatus = data;
+                this.themeService.changeTheme(data.themeType);
             }),
             catchError(err => {
                 return throwError(() => err);
@@ -67,7 +72,7 @@ export class AuthService {
         return this.request.get<UserStatusModel>('auth/user-status').pipe(
             tap(data => {
                 this._userStatus = data;
-                document.body.setAttribute("data-bs-theme", data.themeType === 0 ? 'light' : 'dark');
+                this.themeService.changeTheme(data.themeType);
             }),
             catchError(err => {
                 return throwError(() => err);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RequestService } from './request.service';
+import { RequestService } from './requests/_request.service';
 import { catchError, tap, throwError } from 'rxjs';
 import { ApiSuccessModel } from '../models/api.models';
 

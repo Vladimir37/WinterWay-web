@@ -13,8 +13,11 @@ export class RequestService {
 
     constructor(private http: HttpClient) {}
 
-    get<T>(url: string): Observable<T> {
-        return this.http.get<T>(`${this.apiUrl}${url}`, this.options);
+    get<T>(url: string, params: any = {}): Observable<T> {
+        return this.http.get<T>(`${this.apiUrl}${url}`, {
+            ...this.options,
+            params: params
+        });
     }
 
     post<T>(url: string, body: any): Observable<T> {

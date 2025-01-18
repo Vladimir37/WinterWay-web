@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RequestService } from './request.service';
+import { RequestService } from './requests/_request.service';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { AppStatusModel, BackgroundStatusModel, UserStatusModel } from '../models/status.models';
 import { HttpEvent } from '@angular/common/http';

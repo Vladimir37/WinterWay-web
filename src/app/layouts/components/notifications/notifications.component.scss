@@ -1,0 +1,11 @@
+.notifications {
+    width: 350px;
+    position: absolute;
+    top: 100%;
+    left: calc(100% - 190px);
+}
+.notification-tabs-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

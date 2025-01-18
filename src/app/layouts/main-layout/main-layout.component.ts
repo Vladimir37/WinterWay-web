@@ -10,11 +10,12 @@ import { AuthService } from '../../core/services/auth.service';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { LogoutModalComponent } from '../components/logout-modal/logout-modal.component';
 import { UserModalComponent } from '../components/user-modal/user-modal.component';
+import { NotificationsComponent } from '../components/notifications/notifications.component';
 
 @Component({
     standalone: true,
     selector: 'main-layout',
-    imports: [RouterOutlet, NgOptimizedImage, WWButtonComponent, CollapseDirective, RouterLink, RouterLinkActive],
+    imports: [RouterOutlet, NgOptimizedImage, WWButtonComponent, CollapseDirective, RouterLink, RouterLinkActive, NotificationsComponent],
     animations: [
         trigger('windowBackgroundAnimation', [
             state(AnimationTwoStep.First, style({
@@ -39,6 +40,7 @@ export class MainLayoutComponent {
     bsModalRef?: BsModalRef;
 
     windowBackgroundState: AnimationTwoStep = AnimationTwoStep.Second;
+    notificationBlockOpened: boolean = false;
     mobileNavbarIsCollapsed = true;
 
     protected readonly ElementType = ElementType;
@@ -65,6 +67,10 @@ export class MainLayoutComponent {
 
     toggleMobileNavbar() {
         this.mobileNavbarIsCollapsed = !this.mobileNavbarIsCollapsed;
+    }
+
+    toggleNotificationBlock() {
+        this.notificationBlockOpened = !this.notificationBlockOpened;
     }
 
     openLogoutModal() {

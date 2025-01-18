@@ -20,6 +20,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { BackupService } from '../../../../core/services/backup.service';
 import { ValidationService } from '../../../../core/services/validation.service';
 import { PreloadService } from '../../../../core/services/preload.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
     selector: 'app-root',
@@ -129,6 +130,7 @@ export class AuthComponent {
         private route: ActivatedRoute,
         private appDataService: AppDataService,
         private preloadService: PreloadService,
+        private themeService: ThemeService,
         private authService: AuthService,
         private backupService: BackupService,
         public validationService: ValidationService
@@ -178,6 +180,7 @@ export class AuthComponent {
 
     ngAfterViewInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.themeService.changeTheme(0);
         this.preloadService.preloadImages();
 
         forkJoin({
