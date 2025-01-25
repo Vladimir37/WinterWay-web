@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { UserStatusModel } from '../models/status.models';
 import { RequestService } from './requests/_request.service';
-import { ChangePasswordDTO, EditUserDTO, LoginDTO, RegistrationDTO } from '../models/auth.models';
+import { LoginDTO, RegistrationDTO } from '../models/auth.models';
 import { catchError, tap, throwError } from 'rxjs';
-import { ApiSuccessModel } from '../models/api.models';
 import { ThemeService } from './theme.service';
+import { AuthRequestService } from './requests/auth.request.service';
 
 @Injectable({
     providedIn: 'root'
@@ -13,8 +13,7 @@ export class AuthService {
     private _userStatus: UserStatusModel | null = null;
 
     constructor(
-        private request: RequestService,
-        private themeService: ThemeService
+        private authRequest: AuthRequestService
     ) {}
 
     get userStatus(): UserStatusModel | null {
@@ -22,10 +21,9 @@ export class AuthService {
     }
 
     login(loginData: LoginDTO) {
-        return this.request.post<UserStatusModel>('auth/login', loginData).pipe(
+        return this.authRequest.login(loginData).pipe(
             tap(data => {
                 this._userStatus = data;
-                this.themeService.changeTheme(data.themeType);
             }),
             catchError(err => {
                 return throwError(() => err);
@@ -34,7 +32,7 @@ export class AuthService {
     }
 
     registration(registrationData: RegistrationDTO) {
-        return this.request.post<ApiSuccessModel>('auth/signup', registrationData).pipe(
+        return this.authRequest.registration(registrationData).pipe(
             catchError(err => {
                 return throwError(() => err);
             })
@@ -42,7 +40,7 @@ export class AuthService {
     }
 
     logout() {
-        return this.request.post<ApiSuccessModel>('auth/logout', {}).pipe(
+        return this.authRequest.logout().pipe(
             tap(() => {
                 this._userStatus = null;
             }),
@@ -52,27 +50,10 @@ export class AuthService {
         );
     }
 
-    editUser(editUserData: EditUserDTO) {
-        return this.request.post<ApiSuccessModel>('auth/edit-user', editUserData).pipe(
-            catchError(err => {
-                return throwError(() => err);
-            })
-        );
-    }
-
-    changePassword(changePasswordDTO: ChangePasswordDTO) {
-        return this.request.post<ApiSuccessModel>('auth/change-password', changePasswordDTO).pipe(
-            catchError(err => {
-                return throwError(() => err);
-            })
-        );
-    }
-
     getUserStatus() {
-        return this.request.get<UserStatusModel>('auth/user-status').pipe(
+        return this.authRequest.getUserStatus().pipe(
             tap(data => {
                 this._userStatus = data;
-                this.themeService.changeTheme(data.themeType);
             }),
             catchError(err => {
                 return throwError(() => err);

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { RequestService } from './requests/_request.service';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { AppStatusModel, BackgroundStatusModel, UserStatusModel } from '../models/status.models';
-import { HttpEvent } from '@angular/common/http';
+import { AppStatusModel, BackgroundStatusModel } from '../models/status.models';
+import { AppDataRequestService } from './requests/app-data.request.service';
 
 @Injectable({
     providedIn: 'root'
@@ -11,14 +10,14 @@ export class AppDataService {
     private _appStatus: AppStatusModel | null = null;
     private _backgroundStatus: BackgroundStatusModel | null = null;
 
-    constructor(private request: RequestService) {}
+    constructor(private appDataRequest: AppDataRequestService) {}
 
     get appStatus(): AppStatusModel | null {
         return this._appStatus;
     }
 
     getAppStatus() {
-        return this.request.get<AppStatusModel>('auth/app-status').pipe(
+        return this.appDataRequest.getAppStatus().pipe(
             tap(data => {
                 this._appStatus = data;
             }),
@@ -29,7 +28,7 @@ export class AppDataService {
     }
 
     getBackgroundStatus() {
-        return this.request.get<BackgroundStatusModel>('auth/background-status').pipe(
+        return this.appDataRequest.getBackgroundStatus().pipe(
             tap(data => {
                 this._backgroundStatus = data;
             }),

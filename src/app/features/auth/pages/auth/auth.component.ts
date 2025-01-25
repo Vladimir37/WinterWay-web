@@ -17,10 +17,11 @@ import { AppStatusModel } from '../../../../core/models/status.models';
 import { passwordMatchValidator } from '../../../../core/validators/password-match.validator';
 import { jsonValidator } from '../../../../core/validators/json.validator';
 import { AuthService } from '../../../../core/services/auth.service';
-import { BackupService } from '../../../../core/services/backup.service';
+import { BackupRequestService } from '../../../../core/services/requests/backup.request.service';
 import { ValidationService } from '../../../../core/services/validation.service';
 import { PreloadService } from '../../../../core/services/preload.service';
 import { ThemeService } from '../../../../core/services/theme.service';
+import { PreloaderColor } from '../../../../shared/components/preloader/preloader.enums';
 
 @Component({
     selector: 'app-root',
@@ -132,7 +133,7 @@ export class AuthComponent {
         private preloadService: PreloadService,
         private themeService: ThemeService,
         private authService: AuthService,
-        private backupService: BackupService,
+        private backupRequest: BackupRequestService,
         public validationService: ValidationService
     ) {
         this.loginForm = this.formBuilder.group({
@@ -306,7 +307,7 @@ export class AuthComponent {
 
         this.startLoading();
 
-        this.backupService.import(this.importForm.value?.['ImportData'])
+        this.backupRequest.import(this.importForm.value?.['ImportData'])
             .pipe(
                 finalize(() => {
                     this.finishLoading();
@@ -364,4 +365,6 @@ export class AuthComponent {
             this.formState = AnimationTwoStep.Second;
         }, 1100)
     }
+
+    protected readonly PreloaderColor = PreloaderColor;
 }

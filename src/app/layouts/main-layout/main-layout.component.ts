@@ -11,6 +11,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { LogoutModalComponent } from '../components/logout-modal/logout-modal.component';
 import { UserModalComponent } from '../components/user-modal/user-modal.component';
 import { NotificationsComponent } from '../components/notifications/notifications.component';
+import { ThemeService } from '../../core/services/theme.service';
 
 @Component({
     standalone: true,
@@ -48,6 +49,7 @@ export class MainLayoutComponent {
 
     constructor(
         private bsModalService: BsModalService,
+        private themeService: ThemeService,
         private authService: AuthService
     ) {}
 
@@ -62,7 +64,8 @@ export class MainLayoutComponent {
     ngAfterViewInit() {
         setTimeout(() => {
             this.windowBackgroundState = AnimationTwoStep.First;
-        }, 200)
+        }, 200);
+        this.themeService.changeTheme(this.authService.userStatus!.themeType);
     }
 
     toggleMobileNavbar() {

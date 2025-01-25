@@ -13,8 +13,10 @@ import { ToastService } from '../../../core/services/toast.service';
 import { ValidationService } from '../../../core/services/validation.service';
 import { RadioElement } from '../../../shared/components/radio/radio.model';
 import { passwordMatchValidator } from '../../../core/validators/password-match.validator';
-import { finalize } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 import { InputValidState } from '../../../shared/components/input/input.enums';
+import { AuthRequestService } from '../../../core/services/requests/auth.request.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
     standalone: true,
@@ -81,6 +83,8 @@ export class UserModalComponent {
     constructor(
         private formBuilder: FormBuilder,
         private authService: AuthService,
+        private themeService: ThemeService,
+        private authRequestService: AuthRequestService,
         private toastService: ToastService,
         public validationService: ValidationService,
         public bsModalRef: BsModalRef
@@ -167,15 +171,22 @@ export class UserModalComponent {
 
         this.toggleLoadingStatus(true);
 
-        this.authService.editUser(this.editUserForm.value).pipe(
+        this.authRequestService.editUser(this.editUserForm.value).pipe(
             finalize(() => {
                 this.toggleLoadingStatus(false);
             })
         ).subscribe({
             next: () => {
                 this.bsModalRef.hide();
-                this.authService.getUserStatus().subscribe();
-                this.toastService.createSuccessToast('Success', 'User data has been successfully updated');
+                this.authService.getUserStatus().subscribe({
+                    next: (response) => {
+                        this.themeService.changeTheme(response.themeType);
+                        this.toastService.createSuccessToast('Success', 'User data has been successfully updated');
+                    },
+                    error: (err) => {
+                        this.toastService.createErrorToast('Server error');
+                    }
+                });
             },
             error: () => {
                 this.toastService.createErrorToast('Error', 'Please, try again later');
@@ -191,7 +202,7 @@ export class UserModalComponent {
 
         this.toggleLoadingStatus(true);
 
-        this.authService.changePassword(this.changePasswordForm.value).pipe(
+        this.authRequestService.changePassword(this.changePasswordForm.value).pipe(
             finalize(() => {
                 this.toggleLoadingStatus(false);
             })

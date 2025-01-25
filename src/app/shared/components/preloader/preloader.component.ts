@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
+import { PreloaderColor } from './preloader.enums';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
     standalone: true,
@@ -11,11 +13,16 @@ import { NgOptimizedImage } from '@angular/common';
     styleUrl: './preloader.component.scss'
 })
 export class WWPreloaderComponent {
-    @Input() isWhite: boolean = false;
+    @Input() color: PreloaderColor = PreloaderColor.Theme;
     @Input() small: boolean = false;
 
+    constructor(private themeService: ThemeService) {}
+
     get imageUrl(): string {
-        if (this.isWhite) {
+        if (
+            this.color == PreloaderColor.White ||
+            (this.color == PreloaderColor.Theme && this.themeService.activeTheme == 1)
+        ) {
             return '/images/icons/preloaders/preload-moon-white.gif';
         }
         return '/images/icons/preloaders/preload-moon-black.gif';

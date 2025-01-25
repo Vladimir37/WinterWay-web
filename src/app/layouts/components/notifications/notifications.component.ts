@@ -36,6 +36,14 @@ import { NgTemplateOutlet } from '@angular/common';
 export class NotificationsComponent {
     @Input() show: boolean = false;
 
+    unreadNotifications: Notification[] = [];
+    readNotifications: Notification[] = [];
+    allNotifications: Notification[] = [];
+
+    unreadNotificationsCount: number = 0;
+    readNotificationsCount: number = 0;
+    allNotificationsCount: number = 0;
+
     activeListTab: number = 0;
     listOptions: RadioElement[] = [
         {

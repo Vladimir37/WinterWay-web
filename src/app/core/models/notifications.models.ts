@@ -17,6 +17,7 @@ enum NotificationEntity {
 export class NotificationRequestDTO {
     constructor(
         public Count: number,
+        public Skip: number,
         public Read: boolean,
     ) {}
 }
