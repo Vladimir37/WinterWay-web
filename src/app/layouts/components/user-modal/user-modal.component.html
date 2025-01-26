@@ -28,7 +28,7 @@
             [outline]="true"
         />
     </div>
-    <ng-container *ngTemplateOutlet="formBlockRef"></ng-container>
+    <ng-container *ngTemplateOutlet="formBlockRef" />
     <ng-template #editUser>
         <form [formGroup]="editUserForm">
             <ww-input
@@ -48,7 +48,7 @@
                 [type]="ElementType.Primary"
                 [size]="ElementSize.Medium"
                 [outline]="true"
-            ></ww-radio>
+            />
             <ww-radio
                 class="user-modal-input"
                 id="theme"
@@ -58,7 +58,7 @@
                 [type]="ElementType.Primary"
                 [size]="ElementSize.Medium"
                 [outline]="true"
-            ></ww-radio>
+            />
         </form>
     </ng-template>
     <ng-template #changePassword>

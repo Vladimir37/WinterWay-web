@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UserStatusModel } from '../models/status.models';
-import { RequestService } from './requests/_request.service';
 import { LoginDTO, RegistrationDTO } from '../models/auth.models';
 import { catchError, tap, throwError } from 'rxjs';
-import { ThemeService } from './theme.service';
 import { AuthRequestService } from './requests/auth.request.service';
 
 @Injectable({

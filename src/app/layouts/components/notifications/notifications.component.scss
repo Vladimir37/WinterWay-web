@@ -1,11 +1,47 @@
+.notifications-icon {
+    position: relative;
+    cursor: pointer;
+}
+.notifications-count {
+    position: absolute;
+    bottom: 2px;
+    left: -7px;
+    padding: 0 1px;
+    min-width: 18px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    font-size: 12px;
+    color: white;
+    background-color: var(--dangerColor);
+    border-radius: 100%;
+}
 .notifications {
     width: 350px;
     position: absolute;
     top: 100%;
     left: calc(100% - 190px);
 }
-.notification-tabs-container {
+.notifications-tabs-container {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 24px;
+}
+.notifications-preloader-container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+.notifications-list {
+    margin-bottom: 24px;
+    max-height: 250px;
+    overflow-y: scroll;
+}
+.notification {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    font-size: 18px;
+    white-space: normal;
+    border-bottom: 1px solid var(--primaryColor);
 }

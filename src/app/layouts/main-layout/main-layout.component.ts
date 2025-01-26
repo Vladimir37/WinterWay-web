@@ -41,7 +41,6 @@ export class MainLayoutComponent {
     bsModalRef?: BsModalRef;
 
     windowBackgroundState: AnimationTwoStep = AnimationTwoStep.Second;
-    notificationBlockOpened: boolean = false;
     mobileNavbarIsCollapsed = true;
 
     protected readonly ElementType = ElementType;
@@ -70,10 +69,6 @@ export class MainLayoutComponent {
 
     toggleMobileNavbar() {
         this.mobileNavbarIsCollapsed = !this.mobileNavbarIsCollapsed;
-    }
-
-    toggleNotificationBlock() {
-        this.notificationBlockOpened = !this.notificationBlockOpened;
     }
 
     openLogoutModal() {

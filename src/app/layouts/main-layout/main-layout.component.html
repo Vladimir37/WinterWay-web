@@ -80,26 +80,7 @@
                 </ul>
                 <ul class="navbar-nav ms-auto ww-theme-container">
                     <li class="navbar-brand main-layout-notifications-container">
-                        <div
-                            class="main-layout-notifications-icon"
-                            (click)="toggleNotificationBlock()"
-                        >
-                            <img
-                                class="main-layout-notifications"
-                                ngSrc="/images/icons/bell.svg"
-                                alt="Notifications icon"
-                                width="24"
-                                height="24"
-                                priority
-                            >
-                            <div class="main-layout-notifications-count">
-    <!--                            Max 99+ -->
-                                5
-                            </div>
-                        </div>
-                        <notifications
-                            [show]="notificationBlockOpened"
-                        ></notifications>
+                        <notifications />
                     </li>
                     <li class="nav-item">
                         <span
@@ -121,5 +102,5 @@
             </div>
         </div>
     </nav>
-    <router-outlet></router-outlet>
+    <router-outlet />
 </div>

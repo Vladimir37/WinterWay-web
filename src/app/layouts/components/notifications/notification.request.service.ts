@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
-import { RequestService } from './_request.service';
-import { Notification, NotificationChangeRequestDTO, NotificationRequestDTO } from '../../models/notifications.models';
+import { RequestService } from '../../../core/services/requests/_request.service';
+import {
+    Notification,
+    NotificationChangeRequestDTO,
+    NotificationRequestDTO,
+    NotificationResponseDTO
+} from './notifications.models';
 
 @Injectable({
     providedIn: 'root'
@@ -9,8 +14,8 @@ import { Notification, NotificationChangeRequestDTO, NotificationRequestDTO } fr
 export class NotificationRequestService {
     constructor(private request: RequestService) {}
 
-    getAll(notificationRequest: NotificationRequestDTO) {
-        return this.request.get<Notification[]>('notification/get-all', notificationRequest).pipe(
+    getNotifications(notificationRequest: NotificationRequestDTO) {
+        return this.request.get<NotificationResponseDTO>('notification/get-all', notificationRequest).pipe(
             catchError(err => {
                 return throwError(() => err);
             })
@@ -18,7 +23,7 @@ export class NotificationRequestService {
     }
 
     calculate() {
-        return this.request.get<Notification[]>('notification/calculate').pipe(
+        return this.request.get<NotificationResponseDTO>('notification/calculate').pipe(
             catchError(err => {
                 return throwError(() => err);
             })
@@ -26,7 +31,7 @@ export class NotificationRequestService {
     }
 
     read(notificationChangeRequest: NotificationChangeRequestDTO) {
-        return this.request.post<Notification[]>('notification/read', notificationChangeRequest).pipe(
+        return this.request.post<NotificationResponseDTO>('notification/read', notificationChangeRequest).pipe(
             catchError(err => {
                 return throwError(() => err);
             })
@@ -34,7 +39,7 @@ export class NotificationRequestService {
     }
 
     archive(notificationChangeRequest: NotificationChangeRequestDTO) {
-        return this.request.post<Notification[]>('notification/archive', notificationChangeRequest).pipe(
+        return this.request.post<NotificationResponseDTO>('notification/archive', notificationChangeRequest).pipe(
             catchError(err => {
                 return throwError(() => err);
             })
