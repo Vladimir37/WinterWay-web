@@ -22,7 +22,7 @@
 >
     <div class="card border-primary">
         <div class="card-header">Notifications</div>
-        <div class="card-body">
+        <div class="card-body notifications-body">
             <div class="notifications-tabs-container">
                 <ww-radio
                     id="notifications-tabs"
@@ -35,21 +35,57 @@
                 />
             </div>
             <div class="notifications-block">
-                <div class="notifications-list">
-                    <ng-container *ngFor="let notification of activeNotifications">
-                        <div
-                            class="notification"
+                <div class="notifications-list scrollable">
+                    <ng-container
+                        *ngIf="activeNotifications.length > 0"
+                    >
+                        <ng-container
+                            *ngFor="let notification of activeNotifications"
                         >
-                            {{ notification.message }}
+                            <div
+                                class="notification"
+                                [ngClass]="{
+                                    'notification-unread': !notification.isRead
+                                }"
+                            >
+                                <div class="notification-text">
+                                    {{ notification.message }}
+                                </div>
+                                <div class="notification-date">
+                                    <span class="notification-date-time text-body-secondary">
+                                        {{ notification.creationDate | date: 'HH:mm' }}
+                                    </span>
+                                    <span class="notification-date-day text-body-secondary">
+                                        {{ notification.creationDate | date: 'yyyy-MM-dd' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="activeNotifications.length === 0 && !isLoading">
+                        <div class="notifications-list-empty">
+                            No notifications in this category
                         </div>
                     </ng-container>
-                </div>
-                <div
-                    class="notifications-preloader-container"
-                >
-                    <ww-preloader
-                        [small]="true"
-                    />
+                    <div
+                        *ngIf="isLoading"
+                        class="notifications-more-container"
+                    >
+                        <ww-preloader
+                            [small]="true"
+                        />
+                    </div>
+                    <div
+                        *ngIf="!isLoading && isMoreAvailable"
+                        class="notifications-more-container"
+                    >
+                        <ww-button
+                            label="Load more"
+                            [size]="ElementSize.Small"
+                            [type]="ElementType.Primary"
+                            (clicked)="loadNotifications()"
+                        />
+                    </div>
                 </div>
             </div>
         </div>

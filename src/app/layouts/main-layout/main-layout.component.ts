@@ -62,9 +62,9 @@ export class MainLayoutComponent {
 
     ngAfterViewInit() {
         setTimeout(() => {
+            this.themeService.changeTheme(this.authService.userStatus!.themeType);
             this.windowBackgroundState = AnimationTwoStep.First;
         }, 200);
-        this.themeService.changeTheme(this.authService.userStatus!.themeType);
     }
 
     toggleMobileNavbar() {

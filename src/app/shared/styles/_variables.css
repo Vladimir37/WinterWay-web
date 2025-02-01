@@ -1,10 +1,10 @@
 :root {
-    --primaryColor: #8c7fff;
-    --secondaryColor: #9ddcdb;
-    --dangerColor: #ff8c7f;
-    --warningColor: #f2ff7f;
-    --successColor: #9edc9d;
-    --infoColor: #bc9ddc;
+    --primaryColor: rgb(140 127 255);
+    --secondaryColor: rgb(157 220 219);
+    --dangerColor: rgb(255 140 127);
+    --warningColor: rgb(242 255 127);
+    --successColor: rgb(158 220 157);
+    --infoColor: rgb(188 157 220);
 
-    --lightBlackTextColor: #444444;
+    --lightBlackTextColor: rgb(68 68 68);
 }

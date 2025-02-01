@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
-import { NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { DatePipe, NgClass, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { finalize, Subscription } from 'rxjs';
 import { AnimationTwoStep } from '../../../core/enums/animation-steps.enum';
 import { ElementSize, ElementType } from '../../../shared/enums/element-types.enums';
-import { WWRadioComponent } from '../../../shared/components/radio/radio.component';
 import { RadioElement } from '../../../shared/components/radio/radio.model';
 import { NotificationRequestService } from './notification.request.service';
+import { NotificationRequestDTO, Notification, NotificationRequestWithoutReadDTO } from './notifications.models';
+import { WWRadioComponent } from '../../../shared/components/radio/radio.component';
 import { WWPreloaderComponent } from '../../../shared/components/preloader/preloader.component';
-import { NotificationRequestDTO, Notification } from './notifications.models';
+import { WWButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
     standalone: true,
@@ -18,9 +19,12 @@ import { NotificationRequestDTO, Notification } from './notifications.models';
         NgIf,
         NgOptimizedImage,
         NgForOf,
+        NgClass,
         FormsModule,
+        DatePipe,
         WWRadioComponent,
         WWPreloaderComponent,
+        WWButtonComponent,
     ],
     animations: [
         trigger('notificationBlockAnimation', [
@@ -41,7 +45,7 @@ import { NotificationRequestDTO, Notification } from './notifications.models';
     styleUrl: './notifications.component.scss'
 })
 export class NotificationsComponent {
-    stepSize: number = 10;
+    stepSize: number = 2;
 
     notificationBlockOpened: boolean = false;
 
@@ -73,7 +77,8 @@ export class NotificationsComponent {
     protected readonly ElementSize = ElementSize;
 
     constructor(
-        private notificationsRequest: NotificationRequestService
+        private notificationsRequest: NotificationRequestService,
+        private cdr: ChangeDetectorRef
     ) {}
 
     get notificationBlockState(): AnimationTwoStep {
@@ -116,26 +121,37 @@ export class NotificationsComponent {
 
     toggleNotificationBlock() {
         this.notificationBlockOpened = !this.notificationBlockOpened;
+        if (!this.notificationBlockOpened) {
+            setTimeout(() => {
+                this.activeListTab = 0;
+            }, 220);
+        }
     }
 
     loadNotifications() {
         this.isLoading = true;
+        this.cdr.detectChanges();
 
-        let isRead: boolean | null = null;
-        if (this.activeListTab === 0) {
-            isRead = false;
-        } else if (this.activeListTab === 1) {
-            isRead = true;
+        let query: NotificationRequestDTO | NotificationRequestWithoutReadDTO;
+        if (this.activeListTab === 2) {
+            query = new NotificationRequestWithoutReadDTO(this.stepSize, this.activeNotificationsCount);
+        } else {
+            query = new NotificationRequestDTO(this.stepSize, this.activeNotificationsCount, this.activeListTab === 1);
         }
-        const query = new NotificationRequestDTO(this.stepSize, this.activeNotificationsCount, isRead);
+
         this.requestSubscription = this.notificationsRequest.getNotifications(query).pipe(
             finalize(() => {
                 this.isLoading = false;
+                this.cdr.detectChanges();
             })
         ).subscribe({
             next: (response) => {
                 this.unreadNotificationsCount = response.unreadCount;
-                this.activeNotifications = response.notifications;
+                this.activeNotifications = [
+                    ...this.activeNotifications,
+                    ...response.notifications
+                ];
+                this.activeNotificationsCount = this.activeNotifications.length;
                 if (response.notifications.length < this.stepSize) {
                     this.isMoreAvailable = false;
                 }

@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { RequestService } from '../../../core/services/requests/_request.service';
 import {
-    Notification,
     NotificationChangeRequestDTO,
-    NotificationRequestDTO,
+    NotificationRequestDTO, NotificationRequestWithoutReadDTO,
     NotificationResponseDTO
 } from './notifications.models';
 
@@ -14,7 +13,7 @@ import {
 export class NotificationRequestService {
     constructor(private request: RequestService) {}
 
-    getNotifications(notificationRequest: NotificationRequestDTO) {
+    getNotifications(notificationRequest: NotificationRequestDTO | NotificationRequestWithoutReadDTO) {
         return this.request.get<NotificationResponseDTO>('notification/get-all', notificationRequest).pipe(
             catchError(err => {
                 return throwError(() => err);

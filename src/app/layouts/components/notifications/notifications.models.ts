@@ -18,7 +18,14 @@ export class NotificationRequestDTO {
     constructor(
         public count: number,
         public skip: number,
-        public read: boolean | null,
+        public read: boolean,
+    ) {}
+}
+
+export class NotificationRequestWithoutReadDTO {
+    constructor(
+        public count: number,
+        public skip: number
     ) {}
 }
 
