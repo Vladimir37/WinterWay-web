@@ -1,0 +1,16 @@
+/* Remove notification icon */
+[data-bs-theme="dark"] .notification-remove-button {
+    background-image: url("/images/icons/cross-white.svg");
+}
+[data-bs-theme="light"] .notification-remove-button {
+    background-image: url("/images/icons/cross-black.svg");
+}
+
+/* Read all notifications icon */
+[data-bs-theme="dark"] .notifications-tabs-read-all-button {
+    background-image: url("/images/icons/read-white.svg");
+}
+[data-bs-theme="light"] .notifications-tabs-read-all-button {
+    background-image: url("/images/icons/read-black.svg");
+}
+

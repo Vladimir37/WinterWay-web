@@ -17,7 +17,7 @@
     </div>
 </div>
 <div
-    class="notifications"
+    class="notifications ww-theme-container"
     [@notificationBlockAnimation]="notificationBlockState"
 >
     <div class="card border-primary">
@@ -33,6 +33,10 @@
                     [disabled]="false"
                     [outline]="true"
                 />
+                <div
+                    class="notifications-tabs-read-all-button"
+                    (click)="readAllNotifications()"
+                ></div>
             </div>
             <div class="notifications-block">
                 <div class="notifications-list scrollable">
@@ -45,20 +49,42 @@
                             <div
                                 class="notification"
                                 [ngClass]="{
-                                    'notification-unread': !notification.isRead
+                                    'notification-unread': !notification.isRead,
+                                    'notification-read': notification.isRead
                                 }"
+                                app-hover-delay
+                                [hoverDelayTime]="1000"
+                                (hoverComplete)="readOneNotification(notification.isRead, notification.id)"
                             >
                                 <div class="notification-text">
                                     {{ notification.message }}
                                 </div>
-                                <div class="notification-date">
-                                    <span class="notification-date-time text-body-secondary">
-                                        {{ notification.creationDate | date: 'HH:mm' }}
-                                    </span>
-                                    <span class="notification-date-day text-body-secondary">
-                                        {{ notification.creationDate | date: 'yyyy-MM-dd' }}
-                                    </span>
+                                <div class="notification-footer">
+                                    <div class="notification-date">
+                                        <span class="notification-date-time text-body-secondary">
+                                            {{ notification.creationDate | date: 'HH:mm' }}
+                                        </span>
+                                        <span class="notification-date-day text-body-secondary">
+                                            {{ notification.creationDate | date: 'yyyy-MM-dd' }}
+                                        </span>
+                                    </div>
+                                    <div
+                                        class="notification-badge badge rounded-pill bg-info"
+                                        [ngClass]="{
+                                            'hidden': notification.isRead
+                                        }"
+                                    >
+                                        New
+                                    </div>
                                 </div>
+                                <div
+                                    class="notification-remove-button"
+                                    [ngClass]="{
+                                        'hidden': !notification.isRead
+                                    }"
+                                    title="Delete notification"
+                                    (click)="removeNotification(notification.isRead, notification.id)"
+                                ></div>
                             </div>
                         </ng-container>
                     </ng-container>

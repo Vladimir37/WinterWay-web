@@ -11,6 +11,8 @@ import { NotificationRequestDTO, Notification, NotificationRequestWithoutReadDTO
 import { WWRadioComponent } from '../../../shared/components/radio/radio.component';
 import { WWPreloaderComponent } from '../../../shared/components/preloader/preloader.component';
 import { WWButtonComponent } from '../../../shared/components/button/button.component';
+import { ToastService } from '../../../core/services/toast.service';
+import { AppHoverDelayDirective } from '../../../shared/directives/hover-delay.directive';
 
 @Component({
     standalone: true,
@@ -22,6 +24,7 @@ import { WWButtonComponent } from '../../../shared/components/button/button.comp
         NgClass,
         FormsModule,
         DatePipe,
+        AppHoverDelayDirective,
         WWRadioComponent,
         WWPreloaderComponent,
         WWButtonComponent,
@@ -78,6 +81,7 @@ export class NotificationsComponent {
 
     constructor(
         private notificationsRequest: NotificationRequestService,
+        private toastService: ToastService,
         private cdr: ChangeDetectorRef
     ) {}
 
@@ -147,9 +151,12 @@ export class NotificationsComponent {
         ).subscribe({
             next: (response) => {
                 this.unreadNotificationsCount = response.unreadCount;
+                const uniqueNotifications = response.notifications.filter(elem => {
+                    return !this.activeNotifications.find(notification => notification.id === elem.id);
+                });
                 this.activeNotifications = [
                     ...this.activeNotifications,
-                    ...response.notifications
+                    ...uniqueNotifications
                 ];
                 this.activeNotificationsCount = this.activeNotifications.length;
                 if (response.notifications.length < this.stepSize) {
@@ -157,8 +164,33 @@ export class NotificationsComponent {
                 }
             },
             error: (err) => {
-                console.log(err);
+                this.toastService.createErrorToast('Error retrieving notifications');
             }
         })
+    }
+    removeNotification(isRead: boolean, number: number) {
+        if (!isRead) {
+            return;
+        }
+        console.log('remove')
+        console.log(number)
+    }
+    readOneNotification(isRead: boolean, number: number) {
+        if (isRead) {
+            return;
+        }
+        // const notification = this.activeNotifications.find(notification => notification.id === number)
+        // if (notification) {
+        //     notification.isRead = true;
+        // }
+        console.log('readOne')
+        console.log(number)
+    }
+    readAllNotifications() {
+        const unreadNotificationIds = this.activeNotifications.filter(elem => !elem.isRead).map(elem => elem.id);
+        if (unreadNotificationIds.length === 0) {
+            return;
+        }
+        console.log(unreadNotificationIds)
     }
 }

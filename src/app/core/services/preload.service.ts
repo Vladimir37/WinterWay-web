@@ -8,7 +8,10 @@ export class PreloadService {
         '/images/logos/logo.svg',
         '/images/icons/bell.svg',
         '/images/icons/preloaders/preload-moon-white.gif',
-        '/images/icons/preloaders/preload-moon-black.gif'
+        '/images/icons/preloaders/preload-moon-black.gif',
+        '/images/icons/cross-black.svg',
+        '/images/icons/cross-white.svg',
+        '/images/icons/cross-hover.svg'
     ];
 
     preloadImages() {
