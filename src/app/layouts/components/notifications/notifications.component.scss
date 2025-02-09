@@ -21,6 +21,10 @@
     position: absolute;
     top: 100%;
     left: calc(100% - 190px);
+    @media (max-width: 991px) {
+        left: auto;
+        right: 0;
+    }
 }
 .notifications-body {
     padding: 0;
@@ -64,9 +68,11 @@
 .notification {
     position: relative;
     padding: 1rem 1rem 10px;
+    height: auto;
     border-bottom: 1px solid var(--primaryColor);
     cursor: pointer;
     transition-duration: 0.2s;
+    overflow: hidden;
     &:last-child {
         border-bottom: none;
     }
@@ -79,6 +85,11 @@
 }
 .notification-read {
     padding-right: 42px;
+}
+.notification-archived {
+    padding: 0;
+    height: 0;
+    border-bottom: none;
 }
 .notifications .notification-remove-button {
     position: absolute;

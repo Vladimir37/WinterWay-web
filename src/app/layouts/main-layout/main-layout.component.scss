@@ -2,6 +2,14 @@
     max-width: 1200px;
     margin: 0 auto;
 }
+.main-layout-mobile-notifications {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .navbar-toggler {
+        margin-left: 15px;
+    }
+}
 .main-layout-notifications-container {
     position: relative;
 }

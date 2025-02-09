@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, NgClass, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
@@ -6,13 +6,19 @@ import { finalize, Subscription } from 'rxjs';
 import { AnimationTwoStep } from '../../../core/enums/animation-steps.enum';
 import { ElementSize, ElementType } from '../../../shared/enums/element-types.enums';
 import { RadioElement } from '../../../shared/components/radio/radio.model';
-import { NotificationRequestService } from './notification.request.service';
-import { NotificationRequestDTO, Notification, NotificationRequestWithoutReadDTO } from './notifications.models';
+import { NotificationRequestService } from './services/notification.request.service';
+import {
+    NotificationRequestDTO,
+    Notification,
+    NotificationRequestWithoutReadDTO,
+    NotificationChangeRequestDTO
+} from './notifications.models';
 import { WWRadioComponent } from '../../../shared/components/radio/radio.component';
 import { WWPreloaderComponent } from '../../../shared/components/preloader/preloader.component';
 import { WWButtonComponent } from '../../../shared/components/button/button.component';
 import { ToastService } from '../../../core/services/toast.service';
 import { AppHoverDelayDirective } from '../../../shared/directives/hover-delay.directive';
+import { NotificationsUpdateService } from './services/notifications-update.service';
 
 @Component({
     standalone: true,
@@ -48,6 +54,8 @@ import { AppHoverDelayDirective } from '../../../shared/directives/hover-delay.d
     styleUrl: './notifications.component.scss'
 })
 export class NotificationsComponent {
+    @Input() id: string = '';
+
     stepSize: number = 2;
 
     notificationBlockOpened: boolean = false;
@@ -58,7 +66,6 @@ export class NotificationsComponent {
 
     unreadNotificationsCount: number = 0;
     activeNotifications: Notification[] = [];
-    activeNotificationsCount: number = 0;
 
     _activeListTab: number = 0;
     listOptions: RadioElement[] = [
@@ -81,6 +88,7 @@ export class NotificationsComponent {
 
     constructor(
         private notificationsRequest: NotificationRequestService,
+        private notificationsUpdateService: NotificationsUpdateService,
         private toastService: ToastService,
         private cdr: ChangeDetectorRef
     ) {}
@@ -108,15 +116,39 @@ export class NotificationsComponent {
     set activeListTab(value: number) {
         this._activeListTab = value;
         this.activeNotifications = [];
-        this.activeNotificationsCount = 0;
         this.isLoading = false;
         this.isMoreAvailable = true;
         this.requestSubscription?.unsubscribe();
         this.loadNotifications();
     }
 
+    get visibleNotificationsLength(): number {
+        let notifications: Notification[] = this.activeNotifications.filter(elem => !elem.archived);
+        return notifications.length;
+    }
+
+    get correctNotificationsLength(): number {
+        let notifications: Notification[] = this.activeNotifications.filter(elem => !elem.archived);
+        if (this.activeListTab !== 2) {
+            notifications = notifications.filter(elem => elem.isRead === (this.activeListTab === 1));
+        }
+        return notifications.length;
+    }
+
     ngAfterViewInit() {
         this.loadNotifications();
+        this.notificationsUpdateService.response$.subscribe(response => {
+            if (response === null) {
+                return;
+            }
+            this.unreadNotificationsCount = response.unreadCount;
+            if (this.activeListTab !== 1) {
+                this.activeNotifications = [
+                    ...response.notifications,
+                    ...this.activeNotifications
+                ];
+            }
+        });
     }
 
     ngOnDestroy() {
@@ -138,9 +170,9 @@ export class NotificationsComponent {
 
         let query: NotificationRequestDTO | NotificationRequestWithoutReadDTO;
         if (this.activeListTab === 2) {
-            query = new NotificationRequestWithoutReadDTO(this.stepSize, this.activeNotificationsCount);
+            query = new NotificationRequestWithoutReadDTO(this.stepSize, this.correctNotificationsLength);
         } else {
-            query = new NotificationRequestDTO(this.stepSize, this.activeNotificationsCount, this.activeListTab === 1);
+            query = new NotificationRequestDTO(this.stepSize, this.correctNotificationsLength, this.activeListTab === 1);
         }
 
         this.requestSubscription = this.notificationsRequest.getNotifications(query).pipe(
@@ -158,39 +190,79 @@ export class NotificationsComponent {
                     ...this.activeNotifications,
                     ...uniqueNotifications
                 ];
-                this.activeNotificationsCount = this.activeNotifications.length;
                 if (response.notifications.length < this.stepSize) {
                     this.isMoreAvailable = false;
                 }
             },
-            error: (err) => {
+            error: () => {
                 this.toastService.createErrorToast('Error retrieving notifications');
             }
         })
     }
-    removeNotification(isRead: boolean, number: number) {
+    removeNotification(isRead: boolean, notificationId: number) {
         if (!isRead) {
             return;
         }
-        console.log('remove')
-        console.log(number)
+        this.changeNotificationsArchiveStatus(notificationId, true);
+        const query: NotificationChangeRequestDTO = new NotificationChangeRequestDTO([notificationId]);
+        this.notificationsRequest.archive(query).subscribe({
+            next: (response) => {
+                this.unreadNotificationsCount = response.unreadCount;
+                if (this.visibleNotificationsLength === 0) {
+                    this.loadNotifications();
+                }
+            },
+            error: () => {
+                this.toastService.createErrorToast('Error changing notifications status');
+                this.changeNotificationsArchiveStatus(notificationId, false);
+            }
+        })
     }
-    readOneNotification(isRead: boolean, number: number) {
+    readOneNotification(isRead: boolean, notificationId: number) {
         if (isRead) {
             return;
         }
-        // const notification = this.activeNotifications.find(notification => notification.id === number)
-        // if (notification) {
-        //     notification.isRead = true;
-        // }
-        console.log('readOne')
-        console.log(number)
+        this.changeNotificationsReadStatus([notificationId], true);
+        const query: NotificationChangeRequestDTO = new NotificationChangeRequestDTO([notificationId]);
+        this.notificationsRequest.read(query).subscribe({
+            next: (response) => {
+                this.unreadNotificationsCount = response.unreadCount;
+            },
+            error: () => {
+                this.toastService.createErrorToast('Error changing notifications status');
+                this.changeNotificationsReadStatus([notificationId], false);
+            }
+        })
     }
     readAllNotifications() {
         const unreadNotificationIds = this.activeNotifications.filter(elem => !elem.isRead).map(elem => elem.id);
         if (unreadNotificationIds.length === 0) {
             return;
         }
-        console.log(unreadNotificationIds)
+        this.changeNotificationsReadStatus(unreadNotificationIds, true);
+        const query: NotificationChangeRequestDTO = new NotificationChangeRequestDTO(unreadNotificationIds);
+        this.notificationsRequest.read(query).subscribe({
+            next: (response) => {
+                this.unreadNotificationsCount = response.unreadCount;
+            },
+            error: () => {
+                this.toastService.createErrorToast('Error changing notifications status');
+                this.changeNotificationsReadStatus(unreadNotificationIds, false);
+            }
+        })
+    }
+
+    changeNotificationsReadStatus(notifications: number[], status: boolean) {
+        this.activeNotifications.forEach(elem => {
+            if (notifications.includes(elem.id)) {
+                elem.isRead = status;
+            }
+        })
+    }
+    changeNotificationsArchiveStatus(notification: number, status: boolean) {
+        const targetNotification = this.activeNotifications.find(elem => elem.id === notification);
+        if (targetNotification) {
+            targetNotification.archived = status;
+        }
     }
 }

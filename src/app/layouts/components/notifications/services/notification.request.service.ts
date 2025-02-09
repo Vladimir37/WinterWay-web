@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
-import { RequestService } from '../../../core/services/requests/_request.service';
+import { RequestService } from '../../../../core/services/requests/_request.service';
 import {
     NotificationChangeRequestDTO,
     NotificationRequestDTO, NotificationRequestWithoutReadDTO,
     NotificationResponseDTO
-} from './notifications.models';
+} from '../notifications.models';
 
 @Injectable({
     providedIn: 'root'

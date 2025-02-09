@@ -25,7 +25,7 @@
         <div class="card-body notifications-body">
             <div class="notifications-tabs-container">
                 <ww-radio
-                    id="notifications-tabs"
+                    [id]="'notifications-tabs-' + id"
                     [options]="listOptions"
                     [type]="ElementType.Primary"
                     [size]="ElementSize.Small"
@@ -35,13 +35,14 @@
                 />
                 <div
                     class="notifications-tabs-read-all-button"
+                    title="Mark all loaded notifications as read"
                     (click)="readAllNotifications()"
                 ></div>
             </div>
             <div class="notifications-block">
                 <div class="notifications-list scrollable">
                     <ng-container
-                        *ngIf="activeNotifications.length > 0"
+                        *ngIf="visibleNotificationsLength > 0"
                     >
                         <ng-container
                             *ngFor="let notification of activeNotifications"
@@ -50,7 +51,8 @@
                                 class="notification"
                                 [ngClass]="{
                                     'notification-unread': !notification.isRead,
-                                    'notification-read': notification.isRead
+                                    'notification-read': notification.isRead,
+                                    'notification-archived': notification.archived
                                 }"
                                 app-hover-delay
                                 [hoverDelayTime]="1000"
@@ -88,7 +90,7 @@
                             </div>
                         </ng-container>
                     </ng-container>
-                    <ng-container *ngIf="activeNotifications.length === 0 && !isLoading">
+                    <ng-container *ngIf="visibleNotificationsLength === 0 && !isLoading">
                         <div class="notifications-list-empty">
                             No notifications in this category
                         </div>

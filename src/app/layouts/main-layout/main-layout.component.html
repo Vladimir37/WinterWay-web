@@ -17,14 +17,20 @@
                     priority
                 >
             </a>
-            <button
-                class="navbar-toggler"
-                type="button"
-                aria-label="Toggle navigation"
-                (click)="toggleMobileNavbar()"
-            >
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="main-layout-mobile-notifications">
+                <notifications
+                    id="mobile-notifications"
+                    class="only-mobile"
+                />
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    aria-label="Toggle navigation"
+                    (click)="toggleMobileNavbar()"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
             <div
                 class="collapse navbar-collapse"
                 id="navbarMainLayout"
@@ -80,7 +86,10 @@
                 </ul>
                 <ul class="navbar-nav ms-auto ww-theme-container">
                     <li class="navbar-brand main-layout-notifications-container">
-                        <notifications />
+                        <notifications
+                            id="desktop-notifications"
+                            class="only-desktop"
+                        />
                     </li>
                     <li class="nav-item">
                         <span
