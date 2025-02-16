@@ -1,0 +1,22 @@
+.dashboard-title {
+    margin-top: 24px;
+    margin-bottom: 32px;
+    text-align: center;
+}
+.dashboard-title-date {
+    font-size: 1.2em;
+}
+.dashboard-sprints {
+    margin-bottom: 1.5rem;
+}
+.dashboard-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.dashboard-card-header-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}

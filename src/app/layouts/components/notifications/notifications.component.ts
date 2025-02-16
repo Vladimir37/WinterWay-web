@@ -19,6 +19,7 @@ import { WWButtonComponent } from '../../../shared/components/button/button.comp
 import { ToastService } from '../../../core/services/toast.service';
 import { AppHoverDelayDirective } from '../../../shared/directives/hover-delay.directive';
 import { NotificationsUpdateService } from './services/notifications-update.service';
+import { AppClickOutsideDirective } from '../../../shared/directives/click-outside.directive';
 
 @Component({
     standalone: true,
@@ -31,6 +32,7 @@ import { NotificationsUpdateService } from './services/notifications-update.serv
         FormsModule,
         DatePipe,
         AppHoverDelayDirective,
+        AppClickOutsideDirective,
         WWRadioComponent,
         WWPreloaderComponent,
         WWButtonComponent,
@@ -162,6 +164,13 @@ export class NotificationsComponent {
                 this.activeListTab = 0;
             }, 220);
         }
+    }
+
+    closeNotificationBlock() {
+        this.notificationBlockOpened = false;
+        setTimeout(() => {
+            this.activeListTab = 0;
+        }, 220);
     }
 
     loadNotifications() {

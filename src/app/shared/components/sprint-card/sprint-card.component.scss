@@ -1,0 +1,40 @@
+.sprint-card {
+    width: 300px;
+    height: 150px;
+    padding: 10px 16px;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    //border: 10px solid red !important;
+}
+.sprint-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.sprint-card-top-title-board {
+    font-size: 24px;
+}
+.sprint-card-top-title-sprint {
+    font-size: 18px;
+}
+.sprint-card-top-expire {
+    font-size: 16px;
+}
+.sprint-card-tasks {
+    font-size: 32px;
+}
+.sprint-card-roll-button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 70px 70px;
+    border-color: transparent transparent var(--primaryColor) transparent;
+    transform: rotate(0deg);
+    cursor: pointer;
+}

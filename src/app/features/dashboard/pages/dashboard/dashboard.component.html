@@ -1,4 +1,74 @@
-<div class="dashboard">
-    <h1>Dashboard</h1>
-    <a [routerLink]="'/boards'">To boards</a>
+<div class="main-content-container container-fluid">
+    <div class="dashboard-title">
+        <div class="dashboard-title-date">
+            {{ currentDate | date: 'EEEE, MMMM d, y' }}
+        </div>
+        <h1 class="dashboard-title-greetings">
+            {{ getGreetings() }}, {{ username }}
+        </h1>
+    </div>
+    <div class="dashboard-sprints card">
+        <div class="dashboard-card-header card-header">
+            <div class="dashboard-card-header-text">
+                Active sprints
+            </div>
+            <div class="dashboard-card-header-buttons">
+                <ww-button
+                    label="To boards"
+                    [size]="ElementSize.Small"
+                    [type]="ElementType.Primary"
+                    [routerLink]="'/boards'"
+                />
+                <ww-button
+                    label="To sprints"
+                    [size]="ElementSize.Small"
+                    [type]="ElementType.Primary"
+                    [routerLink]="'/sprints'"
+                />
+            </div>
+        </div>
+        <div class="card-body">
+            <sprint-card
+                [
+            />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="dashboard-card-header card-header">
+                    <div class="dashboard-card-header-text">
+                        Calendars
+                    </div>
+                    <div class="dashboard-card-header-buttons">
+                        <ww-button
+                            label="To calendars"
+                            [size]="ElementSize.Small"
+                            [type]="ElementType.Primary"
+                            [routerLink]="'/calendars'"
+                        />
+                    </div>
+                </div>
+                <div class="card-body">Test</div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="dashboard-card-header card-header">
+                    <div class="dashboard-card-header-text">
+                        Timers
+                    </div>
+                    <div class="dashboard-card-header-buttons">
+                        <ww-button
+                            label="To timers"
+                            [size]="ElementSize.Small"
+                            [type]="ElementType.Primary"
+                            [routerLink]="'/timers'"
+                        />
+                    </div>
+                </div>
+                <div class="card-body">Test</div>
+            </div>
+        </div>
+    </div>
 </div>

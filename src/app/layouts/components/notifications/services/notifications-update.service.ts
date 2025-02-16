@@ -15,7 +15,7 @@ export class NotificationsUpdateService {
     }
 
     private startPeriodicUpdate() {
-        interval(1000 * 60 * 15)
+        interval(1000 * 60 * 16)
             .pipe(
                 switchMap(() => this.notificationRequest.calculate())
             )

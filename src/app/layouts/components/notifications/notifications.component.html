@@ -1,118 +1,124 @@
 <div
-    class="notifications-icon"
-    (click)="toggleNotificationBlock()"
+    app-click-outside
+    (clickOutside)="closeNotificationBlock()"
 >
-    <img
-        ngSrc="/images/icons/bell.svg"
-        alt="Notifications icon"
-        width="24"
-        height="24"
-        priority
-    >
     <div
-        *ngIf="unreadNotificationsCountFormatted !== null"
-        class="notifications-count"
+        class="notifications-icon"
+        (click)="toggleNotificationBlock()"
     >
-        {{ unreadNotificationsCountFormatted }}
+        <img
+            ngSrc="/images/icons/bell.svg"
+            alt="Notifications icon"
+            width="24"
+            height="24"
+            priority
+        >
+        <div
+            *ngIf="unreadNotificationsCountFormatted !== null"
+            class="notifications-count"
+        >
+            {{ unreadNotificationsCountFormatted }}
+        </div>
     </div>
-</div>
-<div
-    class="notifications ww-theme-container"
-    [@notificationBlockAnimation]="notificationBlockState"
->
-    <div class="card border-primary">
-        <div class="card-header">Notifications</div>
-        <div class="card-body notifications-body">
-            <div class="notifications-tabs-container">
-                <ww-radio
-                    [id]="'notifications-tabs-' + id"
-                    [options]="listOptions"
-                    [type]="ElementType.Primary"
-                    [size]="ElementSize.Small"
-                    [(ngModel)]="activeListTab"
-                    [disabled]="false"
-                    [outline]="true"
-                />
-                <div
-                    class="notifications-tabs-read-all-button"
-                    title="Mark all loaded notifications as read"
-                    (click)="readAllNotifications()"
-                ></div>
-            </div>
-            <div class="notifications-block">
-                <div class="notifications-list scrollable">
-                    <ng-container
-                        *ngIf="visibleNotificationsLength > 0"
-                    >
+    <div
+        class="notifications ww-theme-container"
+        [@notificationBlockAnimation]="notificationBlockState"
+    >
+        <div class="card border-primary">
+            <div class="card-header">Notifications</div>
+            <div class="card-body notifications-body">
+                <div class="notifications-tabs-container">
+                    <ww-radio
+                        [id]="'notifications-tabs-' + id"
+                        [options]="listOptions"
+                        [type]="ElementType.Primary"
+                        [size]="ElementSize.Small"
+                        [(ngModel)]="activeListTab"
+                        [disabled]="false"
+                        [outline]="true"
+                    />
+                    <div
+                        class="notifications-tabs-read-all-button"
+                        title="Mark all loaded notifications as read"
+                        (click)="readAllNotifications()"
+                    ></div>
+                </div>
+                <div class="notifications-block">
+                    <div class="notifications-list scrollable">
                         <ng-container
-                            *ngFor="let notification of activeNotifications"
+                            *ngIf="visibleNotificationsLength > 0"
                         >
-                            <div
-                                class="notification"
-                                [ngClass]="{
-                                    'notification-unread': !notification.isRead,
-                                    'notification-read': notification.isRead,
-                                    'notification-archived': notification.archived
-                                }"
-                                app-hover-delay
-                                [hoverDelayTime]="1000"
-                                (hoverComplete)="readOneNotification(notification.isRead, notification.id)"
+                            <ng-container
+                                *ngFor="let notification of activeNotifications; let i = index"
                             >
-                                <div class="notification-text">
-                                    {{ notification.message }}
-                                </div>
-                                <div class="notification-footer">
-                                    <div class="notification-date">
+                                <div
+                                    class="notification"
+                                    [ngClass]="{
+                                        'notification-unread': !notification.isRead,
+                                        'notification-read': notification.isRead,
+                                        'notification-archived': notification.archived,
+                                        'notification-last': !isLoading && !isMoreAvailable && i + 1 === activeNotifications.length
+                                    }"
+                                    app-hover-delay
+                                    [hoverDelayTime]="1000"
+                                    (hoverComplete)="readOneNotification(notification.isRead, notification.id)"
+                                >
+                                    <div class="notification-text">
+                                        {{ notification.message }}
+                                    </div>
+                                    <div class="notification-footer">
+                                        <div class="notification-date">
                                         <span class="notification-date-time text-body-secondary">
                                             {{ notification.creationDate | date: 'HH:mm' }}
                                         </span>
-                                        <span class="notification-date-day text-body-secondary">
+                                            <span class="notification-date-day text-body-secondary">
                                             {{ notification.creationDate | date: 'yyyy-MM-dd' }}
                                         </span>
+                                        </div>
+                                        <div
+                                            class="notification-badge badge rounded-pill bg-info"
+                                            [ngClass]="{
+                                                'hidden': notification.isRead
+                                            }"
+                                        >
+                                            New
+                                        </div>
                                     </div>
                                     <div
-                                        class="notification-badge badge rounded-pill bg-info"
+                                        class="notification-remove-button"
                                         [ngClass]="{
-                                            'hidden': notification.isRead
+                                            'hidden': !notification.isRead
                                         }"
-                                    >
-                                        New
-                                    </div>
+                                        title="Delete notification"
+                                        (click)="removeNotification(notification.isRead, notification.id)"
+                                    ></div>
                                 </div>
-                                <div
-                                    class="notification-remove-button"
-                                    [ngClass]="{
-                                        'hidden': !notification.isRead
-                                    }"
-                                    title="Delete notification"
-                                    (click)="removeNotification(notification.isRead, notification.id)"
-                                ></div>
+                            </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf="visibleNotificationsLength === 0 && !isLoading">
+                            <div class="notifications-list-empty">
+                                No notifications in this category
                             </div>
                         </ng-container>
-                    </ng-container>
-                    <ng-container *ngIf="visibleNotificationsLength === 0 && !isLoading">
-                        <div class="notifications-list-empty">
-                            No notifications in this category
+                        <div
+                            *ngIf="isLoading"
+                            class="notifications-more-container"
+                        >
+                            <ww-preloader
+                                [small]="true"
+                            />
                         </div>
-                    </ng-container>
-                    <div
-                        *ngIf="isLoading"
-                        class="notifications-more-container"
-                    >
-                        <ww-preloader
-                            [small]="true"
-                        />
-                    </div>
-                    <div
-                        *ngIf="!isLoading && isMoreAvailable"
-                        class="notifications-more-container"
-                    >
-                        <ww-button
-                            label="Load more"
-                            [size]="ElementSize.Small"
-                            [type]="ElementType.Primary"
-                            (clicked)="loadNotifications()"
-                        />
+                        <div
+                            [hidden]="isLoading || !isMoreAvailable"
+                            class="notifications-more-container"
+                        >
+                            <ww-button
+                                label="Load more"
+                                [size]="ElementSize.Small"
+                                [type]="ElementType.Primary"
+                                (clicked)="loadNotifications()"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

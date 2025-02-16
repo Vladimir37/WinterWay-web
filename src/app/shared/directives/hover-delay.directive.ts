@@ -10,13 +10,15 @@ export class AppHoverDelayDirective {
 
     private hoverTimeout?: any = null;
 
-    @HostListener('mouseenter') onMouseEnter() {
+    @HostListener('mouseenter')
+    onMouseEnter() {
         this.hoverTimeout = setTimeout(() => {
             this.hoverComplete.emit();
         }, this.hoverDelayTime);
     }
 
-    @HostListener('mouseleave') onMouseLeave() {
+    @HostListener('mouseleave')
+    onMouseLeave() {
         if (this.hoverTimeout) {
             clearTimeout(this.hoverTimeout);
         }
