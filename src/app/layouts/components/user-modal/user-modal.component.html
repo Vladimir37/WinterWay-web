@@ -94,11 +94,12 @@
     </ng-template>
 </div>
 <div class="modal-footer">
-    <ww-preloader
-        *ngIf="isLoading"
-        class="user-modal-preloader"
-        [small]="true"
-    />
+    @if (isLoading) {
+        <ww-preloader
+            class="user-modal-preloader"
+            [small]="true"
+        />
+    }
     <ww-button
         label="Close"
         [size]="ElementSize.Medium"

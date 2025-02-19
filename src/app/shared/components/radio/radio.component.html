@@ -5,7 +5,7 @@
     class="btn-group"
     role="group"
 >
-    <ng-container *ngFor="let option of options; let i = index">
+    @for (option of options; track option.value) {
         <input
             [id]="String(id) + String(option.value)"
             type="radio"
@@ -22,5 +22,5 @@
         >
             {{ option.title }}
         </label>
-    </ng-container>
+    }
 </div>

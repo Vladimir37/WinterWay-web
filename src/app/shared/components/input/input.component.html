@@ -3,17 +3,18 @@
         'form-floating': labelType === InputLabelType.Floating
     }"
 >
-    <label
-        *ngIf="labelType === InputLabelType.Default"
-        class="col-form-label"
-        [ngClass]="{
-            'col-form-label-lg': size === InputSize.Large,
-            'col-form-label-sm': size === InputSize.Small
-        }"
-        [for]="id"
-    >
-        {{ label }}
-    </label>
+    @if (labelType === InputLabelType.Default) {
+        <label
+            class="col-form-label"
+            [ngClass]="{
+                'col-form-label-lg': size === InputSize.Large,
+                'col-form-label-sm': size === InputSize.Small
+            }"
+            [for]="id"
+        >
+            {{ label }}
+        </label>
+    }
     <input
         [type]="type"
         class="ww-input form-control"
@@ -30,19 +31,21 @@
         (input)="onInput($event)"
         (blur)="onTouched()"
     >
-    <label
-        *ngIf="labelType === InputLabelType.Floating"
-        [for]="id"
-    >
-        {{ label }}
-    </label>
-    <div
-        *ngIf="validState !== InputValidState.None"
-        [ngClass]="{
-            'valid-feedback': validState === InputValidState.Valid,
-            'invalid-feedback': validState === InputValidState.Invalid
-        }"
-    >
-        {{ validatorMessage }}
-    </div>
+    @if (labelType === InputLabelType.Floating) {
+        <label
+            [for]="id"
+        >
+            {{ label }}
+        </label>
+    }
+    @if (validState !== InputValidState.None) {
+        <div
+            [ngClass]="{
+                'valid-feedback': validState === InputValidState.Valid,
+                'invalid-feedback': validState === InputValidState.Invalid
+            }"
+        >
+            {{ validatorMessage }}
+        </div>
+    }
 </div>

@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output, forwardRef } from '@angular/core';
-import { NgClass, NgIf } from '@angular/common';
+import { Component, Input, forwardRef } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputLabelType, InputSize, InputValidState } from './input.enums';
 
@@ -7,7 +7,6 @@ import { InputLabelType, InputSize, InputValidState } from './input.enums';
     standalone: true,
     selector: 'ww-input',
     imports: [
-        NgIf,
         NgClass,
     ],
     providers: [

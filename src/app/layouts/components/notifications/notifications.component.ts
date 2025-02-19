@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FormsModule } from '@angular/forms';
-import { DatePipe, NgClass, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { DatePipe, NgClass, NgOptimizedImage } from '@angular/common';
 import { finalize, Subscription } from 'rxjs';
 import { AnimationTwoStep } from '../../../core/enums/animation-steps.enum';
 import { ElementSize, ElementType } from '../../../shared/enums/element-types.enums';
@@ -25,9 +25,7 @@ import { AppClickOutsideDirective } from '../../../shared/directives/click-outsi
     standalone: true,
     selector: 'notifications',
     imports: [
-        NgIf,
         NgOptimizedImage,
-        NgForOf,
         NgClass,
         FormsModule,
         DatePipe,

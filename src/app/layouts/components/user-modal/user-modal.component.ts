@@ -1,5 +1,5 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { UserStatusModel } from '../../../core/models/status.models';
@@ -13,7 +13,7 @@ import { ToastService } from '../../../core/services/toast.service';
 import { ValidationService } from '../../../core/services/validation.service';
 import { RadioElement } from '../../../shared/components/radio/radio.model';
 import { passwordMatchValidator } from '../../../core/validators/password-match.validator';
-import { finalize, tap } from 'rxjs';
+import { finalize } from 'rxjs';
 import { InputValidState } from '../../../shared/components/input/input.enums';
 import { AuthRequestService } from '../../../core/services/requests/auth.request.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -23,7 +23,6 @@ import { ThemeService } from '../../../core/services/theme.service';
     selector: 'user-modal',
     templateUrl: './user-modal.component.html',
     imports: [
-        NgIf,
         FormsModule,
         ReactiveFormsModule,
         WWButtonComponent,

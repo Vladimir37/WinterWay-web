@@ -74,22 +74,24 @@
                 </div>
             </form>
             <div class="auth-page-button-additional">
-                <ww-button
-                    *ngIf="appStatus?.registrationIsAvailable"
-                    label="Register"
-                    [size]="ElementSize.Small"
-                    [type]="ElementType.Primary"
-                    [disabled]="isLoading"
-                    (clicked)="loadBlock(registerFormBlock)"
-                />
-                <ww-button
-                    *ngIf="appStatus?.importIsAvailable"
-                    label="Import data"
-                    [size]="ElementSize.Small"
-                    [type]="ElementType.Primary"
-                    [disabled]="isLoading"
-                    (clicked)="loadBlock(importFormBlock)"
-                />
+                @if (appStatus?.registrationIsAvailable) {
+                    <ww-button
+                        label="Register"
+                        [size]="ElementSize.Small"
+                        [type]="ElementType.Primary"
+                        [disabled]="isLoading"
+                        (clicked)="loadBlock(registerFormBlock)"
+                    />
+                }
+                @if (appStatus?.importIsAvailable) {
+                    <ww-button
+                        label="Import data"
+                        [size]="ElementSize.Small"
+                        [type]="ElementType.Primary"
+                        [disabled]="isLoading"
+                        (clicked)="loadBlock(importFormBlock)"
+                    />
+                }
             </div>
         </div>
     </ng-template>

@@ -17,6 +17,13 @@
     margin: 0 auto;
 }
 
+.cards-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+}
+
 .only-mobile {
     display: none;
     @media (max-width: 991px) {

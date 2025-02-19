@@ -1,5 +1,5 @@
-import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
-import { NgClass, NgIf } from '@angular/common';
+import { Component, forwardRef, Input } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { InputSize, InputValidState } from '../input/input.enums';
 
@@ -7,7 +7,6 @@ import { InputSize, InputValidState } from '../input/input.enums';
     standalone: true,
     selector: 'ww-textarea',
     imports: [
-        NgIf,
         NgClass
     ],
     providers: [

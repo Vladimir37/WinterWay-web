@@ -1,6 +1,6 @@
 import { finalize, forkJoin } from 'rxjs';
 import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { NgIf, NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
+import { NgOptimizedImage, NgTemplateOutlet } from '@angular/common';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -29,7 +29,6 @@ import { PreloaderColor } from '../../../../shared/components/preloader/preloade
     imports: [
         NgOptimizedImage,
         NgTemplateOutlet,
-        NgIf,
         ReactiveFormsModule,
         WWButtonComponent,
         WWInputComponent,

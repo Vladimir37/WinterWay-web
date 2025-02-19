@@ -1,4 +1,4 @@
-.sprint-card {
+.calendar-card {
     width: 250px;
     height: 120px;
     padding: 10px 16px;
@@ -10,29 +10,20 @@
     cursor: pointer;
     //border: 10px solid red !important;
 }
-.sprint-card-top {
+.calendar-card-top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
-.sprint-card-top-title-board {
+.calendar-card-top-title-calendar {
     font-size: 18px;
 }
-.sprint-card-top-title-sprint {
-    font-size: 16px;
-}
-.sprint-card-top-expire {
-    font-size: 14px;
-}
-.sprint-card-tasks {
-    font-size: 24px;
-}
-.sprint-card-roll-button-container {
+.calendar-card-create-record-button-container {
     position: absolute;
     right: 0;
     bottom: 0;
 }
-.sprint-card-roll-button {
+.calendar-card-create-record-button {
     width: 0;
     height: 0;
     border-style: solid;
@@ -40,13 +31,13 @@
     border-color: transparent transparent var(--primaryColor) transparent;
     transform: rotate(0deg);
 }
-.sprint-card-roll-button-icon {
+.calendar-card-create-record-button-icon {
     width: 25px;
     height: 25px;
     position: absolute;
     bottom: 5px;
     right: 5px;
-    background-image: url("/images/icons/roll.svg");
+    background-image: url("/images/icons/plus.svg");
     background-repeat: no-repeat;
     background-size: contain;
 }

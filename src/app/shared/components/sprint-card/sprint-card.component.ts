@@ -22,9 +22,15 @@ export class SprintCardComponent {
     }
 
     get sprintName(): string {
-        if (this.sprint.name.length > 22) {
-            return `${this.sprint.name.substring(0, 18)}…`;
+        if (this.sprint.name.length > 18) {
+            return `${this.sprint.name.substring(0, 16)}…`;
         }
         return this.sprint.name;
+    }
+
+    get tasksStatus(): string {
+        const tasksTotal = this.sprint.tasks?.length;
+        const tasksCompleted = this.sprint.tasks?.filter(elem => elem.isDone).length;
+        return `${tasksCompleted}/${tasksTotal}`;
     }
 }

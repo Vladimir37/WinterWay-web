@@ -14,3 +14,13 @@
     background-image: url("/images/icons/read-black.svg");
 }
 
+/* Body background */
+body {
+    background-size: cover;
+}
+body[data-bs-theme="dark"] {
+    background-image: url("/images/backgrounds/dark.webp");
+}
+body[data-bs-theme="light"] {
+    background-image: url("/images/backgrounds/light.webp");
+}

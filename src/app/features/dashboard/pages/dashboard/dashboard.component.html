@@ -1,11 +1,13 @@
 <div class="main-content-container container-fluid">
-    <div class="dashboard-title">
-        <div class="dashboard-title-date">
-            {{ currentDate | date: 'EEEE, MMMM d, y' }}
+    <div class="dashboard-title-container">
+        <div class="dashboard-title card">
+            <div class="dashboard-title-date">
+                {{ currentDate | date: 'EEEE, MMMM d, y' }}
+            </div>
+            <h1 class="dashboard-title-greetings">
+                {{ greetings }}, {{ username }}
+            </h1>
         </div>
-        <h1 class="dashboard-title-greetings">
-            {{ getGreetings() }}, {{ username }}
-        </h1>
     </div>
     <div class="dashboard-sprints card">
         <div class="dashboard-card-header card-header">
@@ -27,10 +29,26 @@
                 />
             </div>
         </div>
-        <div class="card-body">
-            <sprint-card
-                [
-            />
+        <div class="dashboard-card-body-sprints card-body">
+            @if (loadingStatus.sprints) {
+                <div class="dashboard-card-message-container">
+                    <ww-preloader />
+                </div>
+            } @else if (errorStatus.sprints) {
+                <div class="dashboard-card-message-container" >
+                    <div class="dashboard-card-message-error">Data loading error</div>
+                </div>
+            } @else if (allSprints.length === 0) {
+                <div class="dashboard-card-message-container">
+                    <div class="dashboard-card-message-error">You have no sprints</div>
+                </div>
+            } @else {
+                <div class="cards-container">
+                    @for (sprint of allSprints; track sprint.id) {
+                        <sprint-card [sprint]="sprint" />
+                    }
+                </div>
+            }
         </div>
     </div>
     <div class="row">
@@ -49,7 +67,27 @@
                         />
                     </div>
                 </div>
-                <div class="card-body">Test</div>
+                <div class="card-body">
+                    @if (loadingStatus.calendars) {
+                        <div class="dashboard-card-message-container">
+                            <ww-preloader />
+                        </div>
+                    } @else if (errorStatus.calendars) {
+                        <div class="dashboard-card-message-container" >
+                            <div class="dashboard-card-message-error">Data loading error</div>
+                        </div>
+                    } @else if (allCalendars.length === 0) {
+                        <div class="dashboard-card-message-container">
+                            <div class="dashboard-card-message-error">You have no calendars</div>
+                        </div>
+                    } @else {
+                        <div class="cards-container">
+                            @for (calendar of allCalendars; track calendar.id) {
+                                <calendar-card [calendar]="calendar" />
+                            }
+                        </div>
+                    }
+                </div>
             </div>
         </div>
         <div class="col-6">
@@ -67,7 +105,9 @@
                         />
                     </div>
                 </div>
-                <div class="card-body">Test</div>
+                <div class="card-body">
+                    //
+                </div>
             </div>
         </div>
     </div>

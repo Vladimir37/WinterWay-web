@@ -19,10 +19,11 @@
     Are you sure you want to log out?
 </div>
 <div class="modal-footer">
-    <ww-preloader
-        *ngIf="isLoading"
-        [small]="true"
-    />
+    @if (isLoading) {
+        <ww-preloader
+            [small]="true"
+        />
+    }
     <ww-button
         label="Cancel"
         [size]="ElementSize.Medium"

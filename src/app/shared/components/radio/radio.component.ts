@@ -1,5 +1,4 @@
-import { Component, forwardRef, Input, Output } from '@angular/core';
-import { NgForOf } from '@angular/common';
+import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { ElementSize, ElementType } from '../../enums/element-types.enums';
@@ -10,7 +9,6 @@ import { RadioElement } from './radio.model';
     selector: 'ww-radio',
     imports: [
         ButtonsModule,
-        NgForOf
     ],
     providers: [
         {

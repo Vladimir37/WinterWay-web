@@ -13,12 +13,11 @@
             height="24"
             priority
         >
-        <div
-            *ngIf="unreadNotificationsCountFormatted !== null"
-            class="notifications-count"
-        >
-            {{ unreadNotificationsCountFormatted }}
-        </div>
+        @if (unreadNotificationsCountFormatted !== null) {
+            <div class="notifications-count">
+                {{ unreadNotificationsCountFormatted }}
+            </div>
+        }
     </div>
     <div
         class="notifications ww-theme-container"
@@ -45,12 +44,8 @@
                 </div>
                 <div class="notifications-block">
                     <div class="notifications-list scrollable">
-                        <ng-container
-                            *ngIf="visibleNotificationsLength > 0"
-                        >
-                            <ng-container
-                                *ngFor="let notification of activeNotifications; let i = index"
-                            >
+                        @if (visibleNotificationsLength > 0) {
+                            @for (notification of activeNotifications; let i = $index; track notification.id) {
                                 <div
                                     class="notification"
                                     [ngClass]="{
@@ -93,21 +88,18 @@
                                         (click)="removeNotification(notification.isRead, notification.id)"
                                     ></div>
                                 </div>
-                            </ng-container>
-                        </ng-container>
-                        <ng-container *ngIf="visibleNotificationsLength === 0 && !isLoading">
+                            }
+                        } @else if (visibleNotificationsLength === 0 && !isLoading) {
                             <div class="notifications-list-empty">
                                 No notifications in this category
                             </div>
-                        </ng-container>
-                        <div
-                            *ngIf="isLoading"
-                            class="notifications-more-container"
-                        >
-                            <ww-preloader
-                                [small]="true"
-                            />
-                        </div>
+                        } @else if (isLoading) {
+                            <div class="notifications-more-container">
+                                <ww-preloader
+                                    [small]="true"
+                                />
+                            </div>
+                        }
                         <div
                             [hidden]="isLoading || !isMoreAvailable"
                             class="notifications-more-container"

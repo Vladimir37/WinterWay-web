@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ElementSize, ElementType } from '../../../shared/enums/element-types.enums';
 import { AuthService } from '../../../core/services/auth.service';
@@ -16,7 +15,6 @@ import { finalize } from 'rxjs';
     imports: [
         WWButtonComponent,
         WWPreloaderComponent,
-        NgIf,
     ],
     styleUrl: './logout-modal.component.scss'
 })

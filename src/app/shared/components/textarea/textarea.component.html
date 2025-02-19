@@ -1,11 +1,12 @@
 <div>
-    <label
-        *ngIf="label"
-        [for]="id"
-        class="form-label mt-4"
-    >
-        {{ label }}
-    </label>
+    @if (label) {
+        <label
+            [for]="id"
+            class="form-label mt-4"
+        >
+            {{ label }}
+        </label>
+    }
     <textarea
         class="form-control"
         [ngClass]="{
@@ -19,13 +20,14 @@
         (input)="onInput($event)"
         (blur)="onTouched()"
     ></textarea>
-    <div
-        *ngIf="validState !== InputValidState.None"
-        [ngClass]="{
-            'valid-feedback': validState === InputValidState.Valid,
-            'invalid-feedback': validState === InputValidState.Invalid
-        }"
-    >
-        {{ validatorMessage }}
-    </div>
+    @if (validState !== InputValidState.None) {
+        <div
+            [ngClass]="{
+                'valid-feedback': validState === InputValidState.Valid,
+                'invalid-feedback': validState === InputValidState.Invalid
+            }"
+        >
+            {{ validatorMessage }}
+        </div>
+    }
 </div>

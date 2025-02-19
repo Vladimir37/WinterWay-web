@@ -9,11 +9,15 @@
         }"
         [ngStyle]="minHeightStyles"
     >
-        <div *ngIf="title || subtitle">
-            <strong *ngIf="title">{{ title }}</strong>&nbsp;<span *ngIf="subtitle">{{ subtitle }}</span>
-        </div>
-        <div *ngIf="text">
-            {{ text }}
-        </div>
+        @if (title || subtitle) {
+            <div>
+                <strong *ngIf="title">{{ title }}</strong>&nbsp;<span *ngIf="subtitle">{{ subtitle }}</span>
+            </div>
+        }
+        @if (text) {
+            <div>
+                {{ text }}
+            </div>
+        }
     </div>
 </div>
