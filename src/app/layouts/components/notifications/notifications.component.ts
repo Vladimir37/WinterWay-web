@@ -56,7 +56,7 @@ import { AppClickOutsideDirective } from '../../../shared/directives/click-outsi
 export class NotificationsComponent {
     @Input() id: string = '';
 
-    stepSize: number = 2;
+    stepSize: number = 10;
 
     notificationBlockOpened: boolean = false;
 

@@ -1,13 +1,31 @@
-<div class="calendar-card card border-primary">
+<div
+    class="calendar-card card"
+    [ngStyle]="borderStyles"
+>
     <div class="calendar-card-top">
         <div class="calendar-card-top-title">
-            <div class="calendar-card-top-title-calendar">
+            <div
+                class="calendar-card-top-title-calendar"
+                [title]="this.calendar.name"
+            >
                 {{ calendarName }}
+            </div>
+            <div class="sprint-card-top-title-sprint text-body-secondary">
+                {{ calendarType }}
             </div>
         </div>
     </div>
-    <div class="calendar-card-create-record-button-container">
-        <div class="calendar-card-create-record-button"></div>
-        <div class="calendar-card-create-record-button-icon"></div>
-    </div>
+    <img
+        ngSrc="/images/icons/calendar.svg"
+        alt="Calendar icon"
+        width="24"
+        height="24"
+        priority
+    >
+    @if(canCreateRecordToday) {
+        <div class="calendar-card-create-record-button-container">
+            <div class="calendar-card-create-record-button"></div>
+            <div class="calendar-card-create-record-button-icon"></div>
+        </div>
+    }
 </div>

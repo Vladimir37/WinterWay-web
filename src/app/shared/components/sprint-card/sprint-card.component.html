@@ -1,10 +1,19 @@
-<div class="sprint-card card border-primary">
+<div
+    class="sprint-card card"
+    [ngStyle]="borderStyles"
+>
     <div class="sprint-card-top">
         <div class="sprint-card-top-title">
-            <div class="sprint-card-top-title-board">
+            <div
+                class="sprint-card-top-title-board"
+                [title]="this.sprint.board?.name"
+            >
                 {{ boardName }}
             </div>
-            <div class="sprint-card-top-title-sprint">
+            <div
+                class="sprint-card-top-title-sprint text-body-secondary"
+                [title]="this.sprint.name"
+            >
                 {{ sprintName }}
             </div>
         </div>
@@ -15,8 +24,10 @@
     <div class="sprint-card-tasks">
         {{ tasksStatus }}
     </div>
-    <div class="sprint-card-roll-button-container">
-        <div class="sprint-card-roll-button"></div>
-        <div class="sprint-card-roll-button-icon"></div>
-    </div>
+    @if (isReadyForRoll) {
+        <div class="sprint-card-roll-button-container">
+            <div class="sprint-card-roll-button"></div>
+            <div class="sprint-card-roll-button-icon"></div>
+        </div>
+    }
 </div>

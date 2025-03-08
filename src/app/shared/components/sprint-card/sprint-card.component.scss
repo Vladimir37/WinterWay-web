@@ -8,7 +8,6 @@
     justify-content: space-between;
     align-items: stretch;
     cursor: pointer;
-    //border: 10px solid red !important;
 }
 .sprint-card-top {
     display: flex;
@@ -31,6 +30,9 @@
     position: absolute;
     right: 0;
     bottom: 0;
+    &:hover .sprint-card-roll-button {
+        border-color: transparent transparent var(--primaryHoverColor) transparent;
+    }
 }
 .sprint-card-roll-button {
     width: 0;
@@ -39,6 +41,7 @@
     border-width: 0 0 60px 60px;
     border-color: transparent transparent var(--primaryColor) transparent;
     transform: rotate(0deg);
+    transition-duration: 0.2s;
 }
 .sprint-card-roll-button-icon {
     width: 25px;

@@ -13,7 +13,8 @@ export class PreloadService {
         '/images/icons/preloaders/preload-moon-black.gif',
         '/images/icons/cross-black.svg',
         '/images/icons/cross-white.svg',
-        '/images/icons/cross-hover.svg'
+        '/images/icons/cross-hover.svg',
+        '/images/icons/calendar.svg'
     ];
 
     preloadImages() {

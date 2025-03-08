@@ -93,7 +93,6 @@ export class DashboardComponent {
             )
             .subscribe({
                 next: (response) => {
-                    console.log(response);
                     this.allSprints = response
                         .filter(board => board.actualSprint)
                         .map(board => {
@@ -123,7 +122,6 @@ export class DashboardComponent {
             )
             .subscribe({
                 next: (response) => {
-                    console.log(response);
                     this.allCalendars = response;
                 },
                 error: (err) => {

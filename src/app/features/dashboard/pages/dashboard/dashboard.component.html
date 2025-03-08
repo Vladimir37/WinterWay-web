@@ -36,11 +36,11 @@
                 </div>
             } @else if (errorStatus.sprints) {
                 <div class="dashboard-card-message-container" >
-                    <div class="dashboard-card-message-error">Data loading error</div>
+                    <div class="dashboard-card-message-error text-body-secondary">Data loading error</div>
                 </div>
             } @else if (allSprints.length === 0) {
                 <div class="dashboard-card-message-container">
-                    <div class="dashboard-card-message-error">You have no sprints</div>
+                    <div class="dashboard-card-message-error text-body-secondary">You have no sprints</div>
                 </div>
             } @else {
                 <div class="cards-container">
@@ -51,7 +51,7 @@
             }
         </div>
     </div>
-    <div class="row">
+    <div class="dashboard-calendars-and-timers row">
         <div class="col-6">
             <div class="card">
                 <div class="dashboard-card-header card-header">
@@ -74,11 +74,11 @@
                         </div>
                     } @else if (errorStatus.calendars) {
                         <div class="dashboard-card-message-container" >
-                            <div class="dashboard-card-message-error">Data loading error</div>
+                            <div class="dashboard-card-message-error text-body-secondary">Data loading error</div>
                         </div>
                     } @else if (allCalendars.length === 0) {
                         <div class="dashboard-card-message-container">
-                            <div class="dashboard-card-message-error">You have no calendars</div>
+                            <div class="dashboard-card-message-error text-body-secondary">You have no calendars</div>
                         </div>
                     } @else {
                         <div class="cards-container">
