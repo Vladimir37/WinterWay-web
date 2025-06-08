@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { catchError, throwError } from 'rxjs';
 import { RequestService } from './_request.service';
 import { UserStatusModel } from '../../models/status.models';
-import { catchError, throwError } from 'rxjs';
 import { BoardModel } from '../../models/boards.models';
 
 @Injectable({

@@ -1,25 +1,29 @@
 import { Component, Input } from '@angular/core';
+import { NgClass, NgStyle } from '@angular/common';
 import { SprintModel } from '../../../core/models/boards.models';
-import { NgStyle } from '@angular/common';
+import { PeriodService } from '../../../core/services/period.service';
 
 @Component({
     standalone: true,
     selector: 'sprint-card',
     templateUrl: './sprint-card.component.html',
     imports: [
-        NgStyle
+        NgStyle,
+        NgClass,
     ],
     styleUrl: './sprint-card.component.scss'
 })
 export class SprintCardComponent {
     @Input() sprint!: SprintModel;
 
+    constructor(private periodService: PeriodService) {}
+
     get boardName(): string {
         if (!this.sprint.board) {
             return '';
         }
-        if (this.sprint.board?.name.length > 18) {
-            return `${this.sprint.board?.name.substring(0, 16)}…`;
+        if (this.sprint.board?.name.length > 17) {
+            return `${this.sprint.board?.name.substring(0, 15)}…`;
         }
         return this.sprint.board?.name;
     }
@@ -56,5 +60,26 @@ export class SprintCardComponent {
         const expirationDate = new Date(this.sprint.expirationDate);
         const currentDate = new Date();
         return expirationDate < currentDate;
+    }
+
+    get dateCounter() {
+        if (!this.sprint.expirationDate) {
+            return {
+                isExists: false,
+                isExpired: null,
+                message: null
+            };
+        }
+
+        const expirationDate = new Date(this.sprint.expirationDate);
+        const currentDate = new Date();
+
+        const datePeriod = this.periodService.getPeriodInMaxMeasure(currentDate, expirationDate);
+
+        return {
+            isExists: true,
+            isExpired: datePeriod.isExpired,
+            message: datePeriod.message
+        };
     }
 }

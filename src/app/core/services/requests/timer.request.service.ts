@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { RequestService } from './_request.service';
 import { catchError, throwError } from 'rxjs';
-import { CalendarModel } from '../../models/calendars.models';
+import { RequestService } from './_request.service';
+import { TimerModel } from '../../models/timers.models';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CalendarRequestService {
+export class TimerRequestService {
     constructor(private request: RequestService) {}
 
-    getAllCalendars() {
-        return this.request.get<CalendarModel[]>('calendar/get-all').pipe(
+    getAllTimers() {
+        return this.request.get<TimerModel[]>('timer/get-all').pipe(
             catchError(err => {
                 return throwError(() => err);
             })

@@ -314,7 +314,7 @@ export class AuthComponent {
             )
             .subscribe({
                 next: (response) => {
-                    const username = response.operation.split('|')[1];
+                    const username = response.info;
                     this.getAppStatus();
                     this.loadBlock(this.loginFormBlock);
                     this.onSuccessAlert(`User \"${username}\" has been successfully imported`);

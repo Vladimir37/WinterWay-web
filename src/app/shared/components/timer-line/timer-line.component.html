@@ -1,0 +1,19 @@
+<div class="timer-line">
+    <div class="timer-line-info">
+        <div
+            class="timer-line-info-color"
+            [ngStyle]="timerColorStyles"
+        ></div>
+        <div class="timer-line-info-name">
+            {{ timer.name }}
+        </div>
+    </div>
+    <div class="timer-line-time">
+        <span class="timer-line-time-element">
+            {{ activeTimerCounter.times.years }}
+            {{ activeTimerCounter.times.months }}
+            {{ activeTimerCounter.times.days }}
+            {{ String(activeTimerCounter.times.hours).padStart(2, '0') }}:{{ String(activeTimerCounter.times.minutes).padStart(2, '0') }}:{{ String(activeTimerCounter.times.seconds).padStart(2, '0') }}
+        </span>
+    </div>
+</div>

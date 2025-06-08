@@ -1,0 +1,16 @@
+.timer-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.timer-line-info {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+.timer-line-info-color {
+    width: 15px;
+    height: 15px;
+}

@@ -19,8 +19,8 @@ export class CalendarCardComponent {
         if (!this.calendar.name) {
             return '';
         }
-        if (this.calendar.name.length > 27) {
-            return `${this.calendar.name.substring(0, 24)}…`;
+        if (this.calendar.name.length > 22) {
+            return `${this.calendar.name.substring(0, 19)}…`;
         }
         return this.calendar.name;
     }

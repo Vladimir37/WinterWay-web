@@ -1,18 +1,21 @@
 import { Component } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ElementSize, ElementType } from '../../../../shared/enums/element-types.enums';
 import { WWButtonComponent } from '../../../../shared/components/button/button.component';
-import { RouterLink } from '@angular/router';
 import { WWPreloaderComponent } from '../../../../shared/components/preloader/preloader.component';
 import { BoardRequestService } from '../../../../core/services/requests/board.request.service';
 import { SprintModel } from '../../../../core/models/boards.models';
 import { SprintCardComponent } from '../../../../shared/components/sprint-card/sprint-card.component';
-import { ToastrService } from 'ngx-toastr';
 import { CalendarRequestService } from '../../../../core/services/requests/calendar.request.service';
 import { CalendarModel } from '../../../../core/models/calendars.models';
 import { CalendarCardComponent } from '../../../../shared/components/calendar-card/calendar-card.component';
+import { TimerRequestService } from '../../../../core/services/requests/timer.request.service';
+import { TimerModel } from '../../../../core/models/timers.models';
+import { TimerLineComponent } from '../../../../shared/components/timer-line/timer-line.component';
 
 @Component({
     standalone: true,
@@ -25,6 +28,7 @@ import { CalendarCardComponent } from '../../../../shared/components/calendar-ca
         WWPreloaderComponent,
         SprintCardComponent,
         CalendarCardComponent,
+        TimerLineComponent,
     ],
     styleUrl: './dashboard.component.scss'
 })
@@ -32,6 +36,7 @@ export class DashboardComponent {
     currentDate: Date = new Date();
     allSprints: SprintModel[] = [];
     allCalendars: CalendarModel[] = [];
+    allTimers: TimerModel[] = [];
 
     loadingStatus = {
         sprints: true,
@@ -48,6 +53,7 @@ export class DashboardComponent {
         private authService: AuthService,
         private boardRequest: BoardRequestService,
         private calendarRequest: CalendarRequestService,
+        private timerRequest: TimerRequestService,
         private toastrService: ToastrService
     ) {}
 
@@ -79,6 +85,7 @@ export class DashboardComponent {
     ngAfterViewInit() {
         this.loadSprints();
         this.loadCalendars();
+        this.loadTimers();
     }
 
     loadSprints() {
@@ -95,6 +102,7 @@ export class DashboardComponent {
                 next: (response) => {
                     this.allSprints = response
                         .filter(board => board.actualSprint)
+                        .sort((a, b) => a.sortOrder - b.sortOrder)
                         .map(board => {
                             board.actualSprint!.board = board;
                             return board.actualSprint!;
@@ -122,7 +130,7 @@ export class DashboardComponent {
             )
             .subscribe({
                 next: (response) => {
-                    this.allCalendars = response;
+                    this.allCalendars = response.sort((a, b) => a.sortOrder - b.sortOrder);
                 },
                 error: (err) => {
                     this.errorStatus = {
@@ -130,6 +138,33 @@ export class DashboardComponent {
                         calendars: true
                     };
                     this.toastrService.error('Error retrieving calendars');
+                }
+            });
+    }
+
+    loadTimers() {
+        this.timerRequest.getAllTimers()
+            .pipe(
+                finalize(() => {
+                    this.loadingStatus = {
+                        ...this.loadingStatus,
+                        timers: false
+                    };
+                })
+            )
+            .subscribe({
+                next: (response) => {
+                    this.allTimers = response
+                        .filter(e => !e.archived)
+                        .filter(e => e.timerSessions.filter(ts => ts.active).length > 0)
+                        .sort((a, b) => a.sortOrder - b.sortOrder);
+                },
+                error: (err) => {
+                    this.errorStatus = {
+                        ...this.errorStatus,
+                        timers: true
+                    };
+                    this.toastrService.error('Error retrieving timers');
                 }
             });
     }

@@ -17,9 +17,17 @@
                 {{ sprintName }}
             </div>
         </div>
-        <div class="sprint-card-top-expire">
-            12 days
-        </div>
+        @if (dateCounter.isExists) {
+            <div
+                class="sprint-card-top-expire"
+                [ngClass]="{
+                    'text-danger': dateCounter.isExpired
+                }"
+                [title]="dateCounter.isExpired ? 'Expired' : 'Active sprint'"
+            >
+                {{ dateCounter.message }}
+            </div>
+        }
     </div>
     <div class="sprint-card-tasks">
         {{ tasksStatus }}

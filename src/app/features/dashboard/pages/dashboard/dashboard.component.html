@@ -40,7 +40,7 @@
                 </div>
             } @else if (allSprints.length === 0) {
                 <div class="dashboard-card-message-container">
-                    <div class="dashboard-card-message-error text-body-secondary">You have no sprints</div>
+                    <div class="dashboard-card-message-error text-body-secondary">You have no active sprints</div>
                 </div>
             } @else {
                 <div class="cards-container">
@@ -106,7 +106,25 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    //
+                    @if (loadingStatus.timers) {
+                        <div class="dashboard-card-message-container">
+                            <ww-preloader />
+                        </div>
+                    } @else if (errorStatus.timers) {
+                        <div class="dashboard-card-message-container" >
+                            <div class="dashboard-card-message-error text-body-secondary">Data loading error</div>
+                        </div>
+                    } @else if (allTimers.length === 0) {
+                        <div class="dashboard-card-message-container">
+                            <div class="dashboard-card-message-error text-body-secondary">You have no active timers</div>
+                        </div>
+                    } @else {
+                        <div class="cards-container cards-container-vertical">
+                            @for (timer of allTimers; track timer.id) {
+                                <timer-line [timer]="timer" />
+                            }
+                        </div>
+                    }
                 </div>
             </div>
         </div>
