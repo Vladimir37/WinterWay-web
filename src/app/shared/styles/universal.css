@@ -16,6 +16,9 @@
     max-width: 1200px;
     margin: 0 auto;
 }
+.main-content-container-with-margin {
+    margin-top: 32px;
+}
 
 .cards-container {
     display: flex;
